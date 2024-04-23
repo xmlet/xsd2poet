@@ -1,4 +1,4 @@
-package org.xmlet.xsdasmfaster.classes.utils;
+package org.xmlet.xsdfaster.classes.Utils;
 
 /**
  * Represents a fatal error that occurred during the class generating process. The {@link AsmException#detailMessage}

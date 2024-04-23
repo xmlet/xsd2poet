@@ -1,4 +1,4 @@
-package org.xmlet.xsdasmfaster.classes.infrastructure;
+package org.xmlet.xsdfaster.classes.infrastructure;
 
 import java.util.List;
 import java.util.regex.Pattern;

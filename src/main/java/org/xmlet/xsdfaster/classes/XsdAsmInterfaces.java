@@ -1,8 +1,8 @@
-package org.xmlet.xsdasmfaster.classes;
+package org.xmlet.xsdfaster.classes;
 
-import org.xmlet.xsdasmfaster.classes.utils.AttributeHierarchyItem;
-import org.xmlet.xsdasmfaster.classes.utils.ElementHierarchyItem;
-import org.xmlet.xsdasmfaster.classes.utils.InterfaceInfo;
+import org.xmlet.xsdfaster.classes.Utils.AttributeHierarchyItem;
+import org.xmlet.xsdfaster.classes.Utils.ElementHierarchyItem;
+import org.xmlet.xsdfaster.classes.Utils.InterfaceInfo;
 import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
 import org.xmlet.xsdparser.xsdelements.XsdAll;
 import org.xmlet.xsdparser.xsdelements.XsdAttribute;
@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.*;
-import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.*;
+import static org.xmlet.xsdfaster.classes.XsdAsmUtils.*;
+import static org.xmlet.xsdfaster.classes.XsdSupportingStructure.*;
 
 /**
  * This class is responsible to generate all the code that is related to interfaces.

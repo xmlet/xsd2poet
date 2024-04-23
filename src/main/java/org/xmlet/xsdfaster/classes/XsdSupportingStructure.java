@@ -1,13 +1,10 @@
-package org.xmlet.xsdasmfaster.classes;
+package org.xmlet.xsdfaster.classes;
 
-import org.xmlet.xsdasmfaster.classes.infrastructure.EnumInterface;
-import org.xmlet.xsdasmfaster.classes.infrastructure.RestrictionValidator;
+import org.xmlet.xsdfaster.classes.infrastructure.EnumInterface;
+import org.xmlet.xsdfaster.classes.infrastructure.RestrictionValidator;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.getFullClassTypeName;
-import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.getFullClassTypeNameDesc;
 
 /**
  * This class is responsible for creating some infrastructure classes that can't be reused.
@@ -55,7 +52,7 @@ class XsdSupportingStructure {
     /**
      * Type name for the {@link RestrictionValidator} class present in the infrastructure package of this solution.
      */
-    static String restrictionValidatorType = "org/xmlet/xsdasmfaster/classes/infrastructure/RestrictionValidator";
+    static String restrictionValidatorType = "org/xmlet/xsdfaster/classes/infrastructure/RestrictionValidator";
 
     /**
      * Type name for the ElementVisitor abstract class.
@@ -70,7 +67,7 @@ class XsdSupportingStructure {
     /**
      * Type name for the {@link EnumInterface} interface present in the infrastructure package of this solution.
      */
-    static String enumInterfaceType = "org/xmlet/xsdasmfaster/classes/infrastructure/EnumInterface";
+    static String enumInterfaceType = "org/xmlet/xsdfaster/classes/infrastructure/EnumInterface";
 
     /**
      * Type name for the CustomAttributeGroup interface.
@@ -102,7 +99,7 @@ class XsdSupportingStructure {
         infrastructureVars = new HashMap<>();
 
         infrastructureVars.put(RESTRICTION_VALIDATOR, restrictionValidatorType);
-        infrastructureVars.put(RESTRICTION_VIOLATION_EXCEPTION, "org/xmlet/xsdasmfaster/classes/infrastructure/RestrictionViolationException");
+        infrastructureVars.put(RESTRICTION_VIOLATION_EXCEPTION, "org/xmlet/xsdfaster/classes/infrastructure/RestrictionViolationException");
         infrastructureVars.put(ENUM_INTERFACE, enumInterfaceType);
     }
 
@@ -114,16 +111,16 @@ class XsdSupportingStructure {
      * @param apiName The name of the generated fluent interface.
      */
     static void createSupportingInfrastructure(String apiName){
-        elementType = getFullClassTypeName(ELEMENT, apiName);
-        elementTypeDesc = getFullClassTypeNameDesc(ELEMENT, apiName);
-        customElementType = getFullClassTypeName(CUSTOM_ELEMENT, apiName);
-        customElementTypeDesc = getFullClassTypeNameDesc(CUSTOM_ELEMENT, apiName);
-        elementVisitorType = getFullClassTypeName(ELEMENT_VISITOR, apiName);
-        elementVisitorTypeDesc = getFullClassTypeNameDesc(ELEMENT_VISITOR, apiName);
-        textGroupType = getFullClassTypeName(TEXT_GROUP, apiName);
-        customAttributeGroupType = getFullClassTypeName(CUSTOM_ATTRIBUTE_GROUP, apiName);
-        textType = getFullClassTypeName(TEXT, apiName);
-        textTypeDesc = getFullClassTypeNameDesc(TEXT, apiName);
+        elementType = XsdAsmUtils.getFullClassTypeName(ELEMENT, apiName);
+        elementTypeDesc = XsdAsmUtils.getFullClassTypeNameDesc(ELEMENT, apiName);
+        customElementType = XsdAsmUtils.getFullClassTypeName(CUSTOM_ELEMENT, apiName);
+        customElementTypeDesc = XsdAsmUtils.getFullClassTypeNameDesc(CUSTOM_ELEMENT, apiName);
+        elementVisitorType = XsdAsmUtils.getFullClassTypeName(ELEMENT_VISITOR, apiName);
+        elementVisitorTypeDesc = XsdAsmUtils.getFullClassTypeNameDesc(ELEMENT_VISITOR, apiName);
+        textGroupType = XsdAsmUtils.getFullClassTypeName(TEXT_GROUP, apiName);
+        customAttributeGroupType = XsdAsmUtils.getFullClassTypeName(CUSTOM_ATTRIBUTE_GROUP, apiName);
+        textType = XsdAsmUtils.getFullClassTypeName(TEXT, apiName);
+        textTypeDesc = XsdAsmUtils.getFullClassTypeNameDesc(TEXT, apiName);
 
 /*
         createElement(apiName);

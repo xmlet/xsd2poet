@@ -1,4 +1,4 @@
-package org.xmlet.xsdasmfaster.classes;
+package org.xmlet.xsdfaster.classes;
 
 import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
 import org.xmlet.xsdparser.xsdelements.XsdAttribute;
@@ -10,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.createGeneratedFilesDirectory;
-import static org.xmlet.xsdasmfaster.classes.XsdAsmVisitor.generateVisitors;
-import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.createSupportingInfrastructure;
 
 public class XsdAsm {
 
@@ -35,9 +31,9 @@ public class XsdAsm {
      * @param apiName The resulting fluent interface name.
      */
     public void generateClassFromElements(Stream<XsdElement> elements, String apiName){
-        createGeneratedFilesDirectory(apiName);
+        XsdAsmUtils.createGeneratedFilesDirectory(apiName);
 
-        createSupportingInfrastructure(apiName);
+        XsdSupportingStructure.createSupportingInfrastructure(apiName);
 
         List<XsdElement> elementList = elements.collect(Collectors.toList());
 
@@ -53,7 +49,7 @@ public class XsdAsm {
 
         generateAttributes(attributes, apiName);
 
-        generateVisitors(interfaceGenerator.getExtraElementsForVisitor(), attributes, apiName);
+        XsdAsmVisitor.generateVisitors(interfaceGenerator.getExtraElementsForVisitor(), attributes, apiName);
     }
 
     /**

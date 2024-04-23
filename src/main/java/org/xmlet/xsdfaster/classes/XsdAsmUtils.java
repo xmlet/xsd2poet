@@ -1,7 +1,7 @@
-package org.xmlet.xsdasmfaster.classes;
+package org.xmlet.xsdfaster.classes;
 
-import org.xmlet.xsdasmfaster.classes.utils.AsmException;
-import org.xmlet.xsdasmfaster.classes.utils.InterfaceInfo;
+import org.xmlet.xsdfaster.classes.Utils.AsmException;
+import org.xmlet.xsdfaster.classes.Utils.InterfaceInfo;
 import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
 import org.xmlet.xsdparser.xsdelements.XsdAttribute;
 import org.xmlet.xsdparser.xsdelements.XsdComplexContent;
@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.JAVA_OBJECT_DESC;
-import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.infrastructureVars;
+import static org.xmlet.xsdfaster.classes.XsdSupportingStructure.JAVA_OBJECT_DESC;
+import static org.xmlet.xsdfaster.classes.XsdSupportingStructure.infrastructureVars;
 
 /**
  * This class contains multiple utility methods to the whole XsdAsmFaster solution.

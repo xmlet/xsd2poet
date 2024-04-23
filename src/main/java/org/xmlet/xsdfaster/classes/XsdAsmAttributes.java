@@ -1,4 +1,4 @@
-package org.xmlet.xsdasmfaster.classes;
+package org.xmlet.xsdfaster.classes;
 
 import org.xmlet.xsdparser.xsdelements.XsdAttribute;
 import org.xmlet.xsdparser.xsdelements.XsdList;
@@ -7,7 +7,7 @@ import org.xmlet.xsdparser.xsdelements.xsdrestrictions.XsdEnumeration;
 
 import java.util.List;
 
-import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.getAttributeRestrictions;
+import static org.xmlet.xsdfaster.classes.XsdAsmUtils.getAttributeRestrictions;
 
 /**
  * This class is responsible to generate all the code that is attribute related.

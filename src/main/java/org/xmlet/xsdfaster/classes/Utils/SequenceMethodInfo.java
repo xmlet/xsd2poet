@@ -1,4 +1,4 @@
-package org.xmlet.xsdasmfaster.classes.utils;
+package org.xmlet.xsdfaster.classes.Utils;
 
 import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
 

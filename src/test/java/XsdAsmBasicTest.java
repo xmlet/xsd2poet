@@ -1,6 +1,6 @@
 import org.junit.Test;
-import org.xmlet.xsdasmfaster.classes.XsdAsmUtils;
-import org.xmlet.xsdasmfaster.main.XsdAsmMain;
+import org.xmlet.xsdfaster.classes.XsdAsmUtils;
+import org.xmlet.xsdfaster.main.XsdAsmMain;
 
 import java.io.File;
 import java.net.URL;
