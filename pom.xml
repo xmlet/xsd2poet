@@ -115,7 +115,7 @@
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
-        Xsd2Poet is dedicated to generate a fluent java DSL based on a XSD file. I
+        Xsd2Poet is dedicated to generate a fluent java DSL based on a XSD file
     </description>
     <url>https://github.com/xmlet/xsd2poet</url>
     <licenses>
@@ -128,6 +128,10 @@
         <developer>
             <name>Luís Duarte</name>
             <email>39378@alunos.isel.ipl.pt</email>
+        </developer>
+        <developer>
+            <name>André Vizinha</name>
+            <email>A43567@alunos.isel.pt</email>
         </developer>
     </developers>
     <scm>
