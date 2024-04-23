@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.xmlet.xsdasmfaster.classes.XsdAsmAttributes.generateAttribute;
 import static org.xmlet.xsdasmfaster.classes.XsdAsmUtils.createGeneratedFilesDirectory;
 import static org.xmlet.xsdasmfaster.classes.XsdAsmVisitor.generateVisitors;
 import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.createSupportingInfrastructure;
@@ -46,7 +45,7 @@ public class XsdAsm {
 
         elementList.forEach(element -> generateClassFromElement(element, apiName));
 
-        interfaceGenerator.generateInterfaces(createdAttributes, apiName);
+        // interfaceGenerator.generateInterfaces(createdAttributes, apiName);
 
         List<XsdAttribute> attributes = new ArrayList<>();
 
@@ -63,7 +62,7 @@ public class XsdAsm {
      * @param apiName The name of the resulting fluent interface.
      */
     private void generateAttributes(List<XsdAttribute> attributeVariations, String apiName) {
-        attributeVariations.forEach(attributeVariation -> generateAttribute(attributeVariation, apiName));
+        // attributeVariations.forEach(attributeVariation -> generateAttribute(attributeVariation, apiName));
     }
 
     /**

@@ -1,20 +1,28 @@
 package org.xmlet.xsdasmfaster.classes;
 
-import org.objectweb.asm.ClassWriter;
 import org.xmlet.xsdasmfaster.classes.utils.AsmException;
 import org.xmlet.xsdasmfaster.classes.utils.InterfaceInfo;
-import org.xmlet.xsdparser.xsdelements.*;
+import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
+import org.xmlet.xsdparser.xsdelements.XsdAttribute;
+import org.xmlet.xsdparser.xsdelements.XsdComplexContent;
+import org.xmlet.xsdparser.xsdelements.XsdComplexType;
+import org.xmlet.xsdparser.xsdelements.XsdElement;
+import org.xmlet.xsdparser.xsdelements.XsdExtension;
+import org.xmlet.xsdparser.xsdelements.XsdNamedElements;
+import org.xmlet.xsdparser.xsdelements.XsdRestriction;
 import org.xmlet.xsdparser.xsdelements.xsdrestrictions.XsdEnumeration;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.objectweb.asm.Opcodes.V1_8;
 import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.JAVA_OBJECT_DESC;
 import static org.xmlet.xsdasmfaster.classes.XsdSupportingStructure.infrastructureVars;
 
@@ -218,18 +226,8 @@ public class XsdAsmUtils {
     /**
      * Writes a given class to a .class file.
      * @param className The class name, needed to name the file.
-     * @param classWriter The classWriter, which contains all the class information.
      */
-    static void writeClassToFile(String className, ClassWriter classWriter, String apiName){
-        classWriter.visitEnd();
-
-        byte[] constructedClass = classWriter.toByteArray();
-
-        try (FileOutputStream os = new FileOutputStream(new File(getFinalPathPart(className, apiName)))){
-            os.write(constructedClass);
-        } catch (IOException e) {
-            throw new AsmException("Exception while writing generated classes to the .class files.", e);
-        }
+    static void writeClassToFile(String className, String apiName){
     }
 
     /**
@@ -295,21 +293,6 @@ public class XsdAsmUtils {
         } catch (InvalidParameterException e){
             throw new AsmException("The provided XSD file has contradictory restrictions.", e);
         }
-    }
-
-    /**
-     * Generates the required methods for adding a given attribute and creates the
-     * respective class, if needed.
-     * @param createdAttributes Information about attributes that were already created.
-     * @param classWriter The {@link ClassWriter} to write the methods.
-     * @param elementAttribute The attribute element.
-     * @param returnType The method return type.
-     * @param className The name of the class which will contain the method to add the attribute.
-     * @param apiName The name of the generated fluent interface.
-     */
-    static void generateMethodsAndCreateAttribute(Map<String, List<XsdAttribute>> createdAttributes, ClassWriter classWriter, XsdAttribute elementAttribute, String returnType, String className, String apiName) {
-        XsdAsmAttributes.generateMethodsForAttribute(classWriter, elementAttribute, returnType, className,apiName);
-        createAttribute(createdAttributes, elementAttribute);
     }
 
     /**
@@ -501,28 +484,6 @@ public class XsdAsmUtils {
         }
 
         return signature.toString();
-    }
-
-    /**
-     * Generates an empty class.
-     * @param className The classes name.
-     * @param superName The super object, which the class extends from.
-     * @param interfaces The name of the interfaces which this class implements.
-     * @param classModifiers The modifiers to the class.
-     * @return A class writer that will be used to write the remaining information of the class.
-     */
-    static ClassWriter generateClass(String className, String superName, String[] interfaces, String signature, int classModifiers, String apiName) {
-        ClassWriter classWriter = new ClassWriter(0);
-
-        if (interfaces != null){
-            for (int i = 0; i < interfaces.length; i++) {
-                interfaces[i] = getFullClassTypeName(interfaces[i], apiName);
-            }
-        }
-
-        classWriter.visit(V1_8, classModifiers, getFullClassTypeName(className, apiName), signature, superName, interfaces);
-
-        return classWriter;
     }
 
     /**
