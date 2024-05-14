@@ -22,5 +22,6 @@ class XsdAsmElements {
      * @param apiName The name of the generated fluent interface.
      */
     static void generateClassFromElement(XsdAsmInterfaces interfaceGenerator, Map<String, List<XsdAttribute>> createdAttributes, XsdElement element, String apiName) {
+        System.out.println("teste");
     }
 }

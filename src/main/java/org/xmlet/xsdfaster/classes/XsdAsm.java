@@ -1,9 +1,11 @@
 package org.xmlet.xsdfaster.classes;
 
+import org.xmlet.xsdfaster.classes.javapoet.XsdPoetElements;
 import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
 import org.xmlet.xsdparser.xsdelements.XsdAttribute;
 import org.xmlet.xsdparser.xsdelements.XsdElement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +69,11 @@ public class XsdAsm {
      * @param apiName The name of the resulting fluent interface.
      */
     void generateClassFromElement(XsdElement element, String apiName){
-        XsdAsmElements.generateClassFromElement(interfaceGenerator, createdAttributes, element, apiName);
+
+        try {
+            XsdPoetElements.generateClassFromElement(createdAttributes, element, apiName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

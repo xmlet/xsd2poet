@@ -1,9 +1,15 @@
 package org.xmlet.xsdfaster.classes;
 
+
+import com.squareup.javapoet.*;
 import org.xmlet.xsdfaster.classes.infrastructure.EnumInterface;
 import org.xmlet.xsdfaster.classes.infrastructure.RestrictionValidator;
 
+import javax.lang.model.element.Modifier;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,7 +128,9 @@ class XsdSupportingStructure {
         textType = XsdAsmUtils.getFullClassTypeName(TEXT, apiName);
         textTypeDesc = XsdAsmUtils.getFullClassTypeNameDesc(TEXT, apiName);
 
-/*
+
+
+        /*
         createElement(apiName);
         if (apiName.equals("htmlapifaster")){
             createCustomElement(apiName);
@@ -130,11 +138,71 @@ class XsdSupportingStructure {
         createTextGroup(apiName);
         createCustomAttributeGroup(apiName);
         createText(apiName);
-*/
+
+         */
+
 
         infrastructureVars.put(ELEMENT, elementType);
         infrastructureVars.put(ELEMENT_VISITOR, elementVisitorType);
         infrastructureVars.put(TEXT_GROUP, textGroupType);
+    }
+
+    static void createElement(String apiName) {
+
+        CodeBlock sumOfTenImpl = CodeBlock
+                .builder()
+                .addStatement("int sum = 0")
+                .beginControlFlow("for (int i = 0; i <= 10; i++)")
+                .addStatement("sum += i")
+                .endControlFlow()
+                .build();
+        ParameterSpec strings = ParameterSpec
+                .builder(
+                        ParameterizedTypeName.get(ClassName.get(List.class), TypeName.get(String.class)),
+                        "strings")
+                .build();
+
+        MethodSpec sumOfTen = MethodSpec
+                .methodBuilder("sumOfTen")
+                .addParameter(int.class, "number")
+                .addParameter(strings)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addCode(sumOfTenImpl)
+                .build();
+
+        FieldSpec name = FieldSpec
+                .builder(String.class, "name")
+                .addModifiers(Modifier.PRIVATE)
+                .build();
+
+        TypeSpec person = TypeSpec
+                .classBuilder(apiName)
+                .addModifiers(Modifier.PUBLIC)
+                .addField(name)
+                .addMethod(MethodSpec
+                        .methodBuilder("getName")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(String.class)
+                        .addStatement("return this.name")
+                        .build())
+                .addMethod(MethodSpec
+                        .methodBuilder("setName")
+                        .addParameter(String.class, "name")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(String.class)
+                        .addStatement("this.name = name")
+                        .build())
+                .addMethod(sumOfTen)
+                .build();
+
+        JavaFile javaFile = JavaFile.builder("", person).build();
+
+        try {
+            javaFile.writeTo(new File("src/main/java/org/xmlet/htmlapifaster"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }
