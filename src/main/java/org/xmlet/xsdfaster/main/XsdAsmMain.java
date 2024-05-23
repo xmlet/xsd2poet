@@ -14,6 +14,7 @@ public class XsdAsmMain {
 //            new XsdAsm().generateClassFromElements(new XsdParser(args[0]).getResultXsdElements(), args[1]);
 //        }
         String xsdPath = "./src/main/resources/html_5_2.xsd";
+        //String xsdPath = "./src/main/resources/teste.xsd";
         String out = "htmlapifaster";
         List<XsdElement> xsdElements = new XsdParser(xsdPath).getResultXsdElements().collect(Collectors.toList());
         new XsdAsm().generateClassFromElements(xsdElements.stream(), out);

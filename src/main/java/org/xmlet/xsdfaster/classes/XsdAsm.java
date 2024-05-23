@@ -33,13 +33,10 @@ public class XsdAsm {
      * @param apiName The resulting fluent interface name.
      */
     public void generateClassFromElements(Stream<XsdElement> elements, String apiName){
-        XsdAsmUtils.createGeneratedFilesDirectory(apiName);
 
         XsdSupportingStructure.createSupportingInfrastructure(apiName);
 
         List<XsdElement> elementList = elements.collect(Collectors.toList());
-
-        interfaceGenerator.addCreatedElements(elementList);
 
         elementList.forEach(element -> generateClassFromElement(element, apiName));
 
