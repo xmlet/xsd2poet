@@ -20,6 +20,8 @@ public class XsdAsm {
      */
     private XsdAsmInterfaces interfaceGenerator = new XsdAsmInterfaces(this);
 
+
+    private XsdPoetElements xsdPoetElements = new XsdPoetElements();
     /**
      * A {@link Map} object with information about all the attributes that were used in the element generated classes.
      */
@@ -38,7 +40,9 @@ public class XsdAsm {
 
         List<XsdElement> elementList = elements.collect(Collectors.toList());
 
-        elementList.forEach(element -> generateClassFromElement(element, apiName));
+        elementList.forEach(this::generateClassFromElement);
+
+        xsdPoetElements.buildElementVisitor();
 
         // interfaceGenerator.generateInterfaces(createdAttributes, apiName);
 
@@ -46,29 +50,18 @@ public class XsdAsm {
 
         createdAttributes.keySet().forEach(attribute -> attributes.addAll(createdAttributes.get(attribute)));
 
-        generateAttributes(attributes, apiName);
 
         XsdAsmVisitor.generateVisitors(interfaceGenerator.getExtraElementsForVisitor(), attributes, apiName);
     }
 
     /**
-     * Generates attribute classes based on the received {@link List} of {@link XsdAttribute}.
-     * @param attributeVariations The {@link List} of {@link XsdAttribute} objects that serve as a base to class creation.
-     * @param apiName The name of the resulting fluent interface.
-     */
-    private void generateAttributes(List<XsdAttribute> attributeVariations, String apiName) {
-        // attributeVariations.forEach(attributeVariation -> generateAttribute(attributeVariation, apiName));
-    }
-
-    /**
      * Generates an element class based on the received {@link XsdElement} object.
      * @param element The {@link XsdElement} containing information needed for the class creation.
-     * @param apiName The name of the resulting fluent interface.
      */
-    void generateClassFromElement(XsdElement element, String apiName){
+    void generateClassFromElement(XsdElement element){
 
         try {
-            XsdPoetElements.generateClassFromElement(createdAttributes, element, apiName);
+            xsdPoetElements.generateClassFromElement(element);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

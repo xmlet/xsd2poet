@@ -1,16 +1,17 @@
 package org.xmlet.xsdfaster.classes.javapoet;
 
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
+import com.squareup.javapoet.TypeSpec.Builder;
 import org.xmlet.xsdfaster.classes.Utils.InterfaceInfo;
+import org.xmlet.xsdfaster.classes.XsdAsmUtils;
 import org.xmlet.xsdparser.xsdelements.*;
 import org.xmlet.xsdparser.xsdelements.elementswrapper.ReferenceBase;
 
-import java.io.File;
+
+import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.firstToUpper;
 import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.getElementInterfacesElement;
@@ -19,13 +20,23 @@ public class XsdPoetElements {
 
     private static XsdPoetInterfaces xsdPoetInterfaces = new XsdPoetInterfaces();
 
-    private XsdPoetElements() {}
+    private Builder elementVisitorBuilder;
+
+    public XsdPoetElements() {
+        elementVisitorBuilder = xsdPoetInterfaces.createElementVisitorBuilder();
+    }
 
 
-    public static void generateClassFromElement(Map<String, List<XsdAttribute>> createdAttributes, XsdElement element, String apiName) throws IOException {
+    public void generateClassFromElement(XsdElement element) throws IOException {
         System.out.println("teste");
 
         createInterfaces(element);
+
+        xsdPoetInterfaces.createElement(element, elementVisitorBuilder);
+    }
+
+    public void buildElementVisitor() {
+        xsdPoetInterfaces.createClass(elementVisitorBuilder);
     }
 
     private static void createInterfaces(XsdElement element) {

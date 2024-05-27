@@ -249,7 +249,7 @@ class XsdAsmInterfaces {
 
         if (!createdElements.containsKey(getCleanName(elementName))){
             createdElements.put(getCleanName(elementName), element);
-            xsdAsmInstance.generateClassFromElement(element, apiName);
+            xsdAsmInstance.generateClassFromElement(element);
         }
     }
 
