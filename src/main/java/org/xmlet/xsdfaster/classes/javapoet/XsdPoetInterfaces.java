@@ -2,18 +2,42 @@ package org.xmlet.xsdfaster.classes.javapoet;
 
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
-import org.xmlet.xsdparser.xsdelements.XsdAbstractElement;
-import org.xmlet.xsdparser.xsdelements.XsdElement;
-import org.xmlet.xsdparser.xsdelements.XsdGroup;
+import org.xmlet.xsdparser.xsdelements.*;
+import org.xmlet.xsdparser.xsdelements.elementswrapper.ReferenceBase;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.firstToUpper;
 
 public class XsdPoetInterfaces {
+
+    private static final HashSet<String> attributeClassesSet = new HashSet<>();
+
+    private static final HashSet<String> attributeFunctionSet = new HashSet<>();
+
+    private static final HashSet<String> attributesFromSuperClass = new HashSet<>();
+
+    private static final HashSet<String> primitivesSet = new HashSet<>(
+            Set.of(
+                    "boolean",
+                    "byte",
+                    "char",
+                    "short",
+                    "int",
+                    "long",
+                    "float",
+                    "double",
+                    "void",
+                    "string")
+    );
+
+    private static final String primitivesPackage = "java.lang";
 
     private static final String ROOT_PATH = "./src/main/java";
 
@@ -128,6 +152,7 @@ public class XsdPoetInterfaces {
     public void createElement(XsdElement element, Builder elementVisitorBuilder) {
         String elementName = element.getName();
         String className = firstToUpper(elementName);
+
         ClassName elementVisitor = ClassName.get(CLASS_PACKAGE, "ElementVisitor");
 
         TypeVariableName z = TypeVariableName.get("Z", ClassName.get(ELEMENT_PACKAGE, "Element"));
@@ -163,7 +188,7 @@ public class XsdPoetInterfaces {
         MethodSpec terminator = MethodSpec.methodBuilder("__")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(z)
-                .addStatement("this.visitor.visitParentElement" + className + "(this)")
+                .addStatement("this.visitor.visitParent" + className + "(this)")
                 .addStatement("return this.parent")
                 .build();
 
@@ -205,6 +230,96 @@ public class XsdPoetInterfaces {
                 .addMethod(getName)
                 .addMethod(self);
 
+        List<ReferenceBase> attributeGroups = element.getXsdComplexType().getVisitor().getAttributeGroups();
+
+        for (ReferenceBase attributeGroup : attributeGroups) {
+            String interfaceName = XsdPoetUtils.firstToUpper(getName(attributeGroup.getElement()));
+            builder.addSuperinterface(
+                    ParameterizedTypeName
+                            .get(ClassName.get(CLASS_PACKAGE, interfaceName), TypeVariableName.get(className+"<Z>"), z)
+            );
+            if (!attributeClassesSet.contains(interfaceName)) {
+                XsdAttributeGroup group = (XsdAttributeGroup) attributeGroup.getElement();
+                ClassName classNameElement = ClassName.get(ELEMENT_PACKAGE, "Element");
+                TypeVariableName t = TypeVariableName.get("T", ParameterizedTypeName.get(classNameElement, TypeVariableName.get("T"), TypeVariableName.get("Z")));
+                Builder interfaceBuilder = TypeSpec
+                        .interfaceBuilder(interfaceName)
+                        .addTypeVariable(t)
+                        .addTypeVariable(TypeVariableName.get("Z", classNameElement))
+                        .addModifiers(Modifier.PUBLIC);
+                group.getAllAttributes().forEach(attribute -> {
+                    String attributeName = attribute.getName();
+                    if (!attributeFunctionSet.contains(attributeName)) {
+                        String attributeClassName = firstToUpper(attributeName);
+                        String elementVisitorFunctionName = "visitAttribute" + attributeClassName;
+                        String attrName = "attr" + attributeClassName;
+                        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(attrName)
+                                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
+                                .returns(t)
+                                .addStatement("this.getVisitor()." + elementVisitorFunctionName + "(" + attrName + ")")
+                                .addStatement("return this.self()");
+                        String type = attribute.getType().substring("xsd:".length());
+                        if (primitivesSet.contains(type)) {
+                            methodBuilder.addParameter(ClassName.get(primitivesPackage, firstToUpper(type)), attrName);
+                        } else {
+                            methodBuilder.addParameter(ClassName.get(CLASS_PACKAGE, "Enum" + attributeClassName + "Type"), attrName);
+                        }
+                        interfaceBuilder.addMethod(methodBuilder.build());
+
+                        elementVisitorBuilder.addMethod(
+                                MethodSpec.methodBuilder(elementVisitorFunctionName)
+                                        .addParameter(String.class, attrName)
+                                        .addStatement("this.visitAttribute(\"" + attributeName +"\"," + attrName +")")
+                                        .build()
+                        );
+                        attributesFromSuperClass.add(attributeName);
+                        attributeFunctionSet.add(attributeName);
+                    }
+                });
+
+                createClass(interfaceBuilder);
+                System.out.println("breakpoint");
+                attributeClassesSet.add(interfaceName);
+            }
+        }
+
+        element.getXsdComplexType().getVisitor().getAttributes().forEach(attribute -> {
+            XsdAttribute attr = (XsdAttribute) attribute.getElement();
+            String attributeName = attr.getName();
+            if (!attributesFromSuperClass.contains(attributeName)) {
+                String attributeClassName = firstToUpper(attributeName);
+                String attrName = "attr" + attributeClassName;
+                String elementVisitorFunctionName = "visitAttribute" + attributeClassName;
+                MethodSpec methodBuilder = MethodSpec.methodBuilder(attrName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), z))
+                        .addParameter(String.class, attrName)
+                        .addStatement("this.visitor." + elementVisitorFunctionName + "(" + attrName + ")") //unica coisa diferente do codigo acima
+                        .addStatement("return this.self()")
+                        .build();
+                builder.addMethod(methodBuilder);//cena diferente
+                if (!attributeFunctionSet.contains(attributeName)) {
+                    elementVisitorBuilder.addMethod(
+                            MethodSpec.methodBuilder(elementVisitorFunctionName)
+                                    .addParameter(String.class, attrName)
+                                    .addStatement("this.visitAttribute(\"" + attributeName + "\"," + attrName + ")")
+                                    .build()
+                    );
+
+                    attributeFunctionSet.add(attributeName);
+                }
+            }
+        });
+
+
+
+        MethodSpec parentVisitorMethod = MethodSpec.methodBuilder("visitElement" + className)
+                .addModifiers(Modifier.PUBLIC)
+                .addTypeVariable(z)
+                .addParameter(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), z), elementName)
+                .addStatement("this.visitElement("+ elementName + ")")
+                .build();
+
         MethodSpec elementVisitorMethod = MethodSpec.methodBuilder("visitParent" + className)
                 .addModifiers(Modifier.PUBLIC)
                 .addTypeVariable(z)
@@ -212,9 +327,14 @@ public class XsdPoetInterfaces {
                 .addStatement("this.visitParent("+ elementName + ")")
                 .build();
 
+        elementVisitorBuilder.addMethod(parentVisitorMethod);
         elementVisitorBuilder.addMethod(elementVisitorMethod);
 
         createClass(builder);
+    }
+
+    public String getName(XsdAbstractElement element) {
+        return element.getElementFieldsMap().getOrDefault("name", (String) null);
     }
 
     public Builder createElementVisitorBuilder() {
