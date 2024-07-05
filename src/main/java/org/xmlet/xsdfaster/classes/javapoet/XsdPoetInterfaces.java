@@ -264,7 +264,7 @@ public class XsdPoetInterfaces {
                 String attributeClassName = firstToUpper(attributeName);
                 String attrName = "attr" + attributeClassName;
                 String elementVisitorFunctionName = "visitAttribute" + attributeClassName;
-                MethodSpec.Builder methodBuilder = createAttrMethodBuilder(attrName, elementVisitorFunctionName, className,"visitor");
+                MethodSpec.Builder methodBuilder = createAttrMethodBuilder(attrName, elementVisitorFunctionName, className,"visitor", Modifier.FINAL);
                 builder.addMethod(methodBuilder.build());
                 if (!attributeFunctionSet.contains(attributeName)) {
                     elementVisitorBuilder.addMethod(
@@ -307,7 +307,7 @@ public class XsdPoetInterfaces {
         String attrName = "attr" + attributeClassName;
         String elementVisitorFunctionName = "visitAttribute" + attributeClassName;
         if (!attributeFunctionSet.contains(attributeName)) {
-            MethodSpec.Builder methodBuilder = createAttrMethodBuilder(attrName,elementVisitorFunctionName, className,"getVisitor()");
+            MethodSpec.Builder methodBuilder = createAttrMethodBuilder(attrName,elementVisitorFunctionName, className,"getVisitor()", Modifier.DEFAULT);
             String type = attribute.getType().substring("xsd:".length());
             if (primitivesSet.contains(type)) {
                 methodBuilder.addParameter(ClassName.get(primitivesPackage, firstToUpper(type)), attrName);
@@ -331,10 +331,11 @@ public class XsdPoetInterfaces {
             String attrName,
             String elementVisitorFunctionName,
             String className,
-            String visitor
+            String visitor,
+            Modifier modifier
     ) {
         return  MethodSpec.methodBuilder(attrName)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addModifiers(Modifier.PUBLIC, modifier)
                 .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement))
                 .addParameter(String.class, attrName)
                 .addStatement("this." + visitor + "." + elementVisitorFunctionName + "(" + attrName + ")") //unica coisa diferente do codigo acima
