@@ -376,7 +376,7 @@
         <xsd:complexType mixed="true">
             <xsd:choice>
                 <xsd:group ref="flowContent" />
-                <xsd:element name="figcaption" minOccurs="0"/>
+                <xsd:element ref="figcaption" minOccurs="0"/>
             </xsd:choice>
             <xsd:attributeGroup ref="globalAttributes" />
         </xsd:complexType>
