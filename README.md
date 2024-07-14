@@ -9,9 +9,9 @@
 - "HTML elements" classes generation is done (please check missing tag)
 - "Enums" classes generation is done (please check missing tag)
 - "Custom Attribute Groups" are being generator (please check missing tag)
+- sizesType corner case is done
 ### Missing:
 - ElementVisitor methods generation
-- sizesType not done in HTML elements attributes and in the Enums generation, corner case -> to be checked
 - Possible code refactoring, code repetition
 - CustomAttributes is not being generated
 

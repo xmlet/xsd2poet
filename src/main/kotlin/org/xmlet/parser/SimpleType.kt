@@ -1,6 +1,6 @@
 package org.xmlet.parser
 
-import org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper
+import org.w3c.dom.Node
 import java.util.*
 
 class SimpleType(val upperCaseName: String, val baseType: String) {
@@ -9,26 +9,33 @@ class SimpleType(val upperCaseName: String, val baseType: String) {
 
     private val restrictionValues : LinkedList<String> = LinkedList()
 
-    private val references: LinkedList<String> = LinkedList()
-
     init {
-        references.add("EnumInterface")
 
         if (baseType.lowercase() != "string")
             throw Exception("Enum with a base type that is not xsd:string is currently not supported")
     }
 
-    fun addValue(value: String) {
+    fun addValue(node: Node) {
+        val value = node.attributes.getNamedItem("value").nodeValue
+        if (node.nodeName.contains("enumeration"))
+            handleEnumeration(value)
+        else
+            restrictionValues.add(value)
+
+    }
+
+    fun handleEnumeration(value: String) {
         val enumName =
             if (value.isEmpty())
                 "EMPTY"
             else if (value.toIntOrNull() != null)
                 "_${value}"
+            else if (value.length > 1)
+                value.uppercase()
             else
                 value
         enumValues.add(Pair(
             enumName
-                .uppercase()
                 .replace("/", "_")
                 .replace("-","_")
                 .replace(".","_")
@@ -37,6 +44,6 @@ class SimpleType(val upperCaseName: String, val baseType: String) {
 
     fun getList() : List<Pair<String,String>> = enumValues
 
-    fun getRefsList() : List<String> = references
+    fun getRestrictionList(): List<String> = restrictionValues
 
 }

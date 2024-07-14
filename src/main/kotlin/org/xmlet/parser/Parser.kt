@@ -137,12 +137,9 @@ class Parser {
                     restriction.attributes.getNamedItem("base").nodeValue.substring("xsd:".length)
                 )
             restriction.childNodes.forEachXsdElement {
-                if (it.nodeName.contains("enumeration"))
-                    simpleType.addValue(it.attributes.getNamedItem("value").nodeValue)
-                else
-                    println("Node \"${current.nodeName}\" - \"${current.attributes.getNamedItem("name").nodeValue}\" is currently being ignored, be aware and do the needful")
+                simpleType.addValue(it);
             }
-            if (simpleType.getList().isNotEmpty())
+            if (simpleType.getList().isNotEmpty() || simpleType.getRestrictionList().isNotEmpty())
                 simpleTypeList.add(simpleType)
         }
     }

@@ -1,9 +1,6 @@
 package org.xmlet.xsdfaster.classes.javapoet.newparser;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import kotlin.Pair;
 import org.xmlet.parser.ElementXsd;
 
@@ -106,10 +103,7 @@ public class ElementGenerator {
 
         MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement))
-                //.addParameter(String.class, attrName)
-                .addStatement("this.visitor.visitAttribute" + name + "(" + attrName + ")")
-                .addStatement("return this.self()");
+                .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement));
 
         String type = attrData.component2();
 
@@ -120,8 +114,12 @@ public class ElementGenerator {
         }
 
         if (specialTypes.contains(type)) {
-            System.out.println("In Element builder, attr function builder, a special Type was detected, nothing was done, please do the needful");
+            method.addStatement("$T.validateRestrictions(" + attrName + ")",ClassName.get(CLASS_PACKAGE, "AttrSizesString") );
         }
+
+        method
+                .addStatement("this.visitor.visitAttribute" + name + "(" + attrName + ")")
+                .addStatement("return this.self()");
 
         builder.addMethod(method.build());
     }

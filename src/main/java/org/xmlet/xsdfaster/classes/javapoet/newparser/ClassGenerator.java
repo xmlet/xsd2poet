@@ -49,6 +49,8 @@ public class ClassGenerator {
 
     private static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
 
+    public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdfaster.classes.infrastructure";
+
     public static ClassName elementClassName = ClassName.get(ELEMENT_PACKAGE, "Element");
 
     static final TypeVariableName ELEMENT_T_Z =
