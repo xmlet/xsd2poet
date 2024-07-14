@@ -1,6 +1,5 @@
 package org.xmlet.xsdfaster.main;
 
-import org.xmlet.xsdfaster.classes.XsdAsm;
 import org.xmlet.xsdparser.core.XsdParser;
 import org.xmlet.xsdparser.xsdelements.XsdElement;
 
@@ -17,6 +16,6 @@ public class XsdAsmMain {
         //String xsdPath = "./src/main/resources/teste.xsd";
         String out = "htmlapifaster";
         List<XsdElement> xsdElements = new XsdParser(xsdPath).getResultXsdElements().collect(Collectors.toList());
-        new XsdAsm().generateClassFromElements(xsdElements.stream(), out);
+        //new XsdAsm().generateClassFromElements(xsdElements.stream(), out);
     }
 }

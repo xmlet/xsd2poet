@@ -8,8 +8,17 @@ class Choice(val name: String) {
 
     private val references: LinkedList<String> = LinkedList()
 
+    private var textGroupRemoved = false
+
     init {
         references.add("TextGroup")
+    }
+
+    private fun removeTextGroup() {
+        if (!textGroupRemoved) {
+            references.remove("TextGroup")
+            textGroupRemoved = true
+        }
     }
 
     fun addValue(node: Node) {
@@ -17,10 +26,12 @@ class Choice(val name: String) {
         if (node.nodeName == "xsd:element")
             choiceValues.add(value)
         else if (node.nodeName == "xsd:group") {
-            references.remove("TextGroup")
+            removeTextGroup()
             references.add(value)
         }
     }
 
-    fun getList() : List<String> = choiceValues
+    fun getChoiceList() : List<String> = choiceValues
+
+    fun getRefList() : List<String> = references
 }

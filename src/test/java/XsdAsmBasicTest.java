@@ -1,5 +1,4 @@
 import org.junit.Test;
-import org.xmlet.xsdfaster.classes.XsdAsmUtils;
 import org.xmlet.xsdfaster.main.XsdAsmMain;
 
 import java.io.File;

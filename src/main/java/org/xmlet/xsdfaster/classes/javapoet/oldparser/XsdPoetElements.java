@@ -1,20 +1,15 @@
-package org.xmlet.xsdfaster.classes.javapoet;
+package org.xmlet.xsdfaster.classes.javapoet.oldparser;
 
-import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
 import org.xmlet.xsdfaster.classes.Utils.InterfaceInfo;
-import org.xmlet.xsdfaster.classes.XsdAsmUtils;
 import org.xmlet.xsdparser.xsdelements.*;
-import org.xmlet.xsdparser.xsdelements.elementswrapper.ReferenceBase;
 
 
-import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.firstToUpper;
-import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.getElementInterfacesElement;
+import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.getElementInterfacesElement;
 
 public class XsdPoetElements {
 

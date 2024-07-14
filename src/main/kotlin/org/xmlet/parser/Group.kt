@@ -21,5 +21,7 @@ class Group(val name: String, type: String) {
             references.add(value)
     }
 
-    fun getList() : List<String> = groupValues
+    fun getChoiceList() : List<String> = groupValues
+
+    fun getRefList() : List<String> = references
 }

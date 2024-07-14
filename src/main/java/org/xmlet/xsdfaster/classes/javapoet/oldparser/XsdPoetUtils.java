@@ -1,4 +1,4 @@
-package org.xmlet.xsdfaster.classes.javapoet;
+package org.xmlet.xsdfaster.classes.javapoet.oldparser;
 
 import org.xmlet.xsdparser.xsdelements.*;
 
@@ -30,7 +30,7 @@ public class XsdPoetUtils {
         return child;
     }
 
-    static String firstToUpper(String name){
+    public static String firstToUpper(String name){
         if (name.length() == 1){
             return name.toUpperCase();
         }

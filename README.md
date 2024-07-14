@@ -4,6 +4,17 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.xmlet%3AxsdAsmFaster&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=com.github.xmlet%3AxsdAsmFaster)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.xmlet%3AxsdAsmFaster&metric=bugs)](https://sonarcloud.io/dashboard?id=com.github.xmlet%3AxsdAsmFaster)
 
+### Done:
+- "All" and "Choice" classes generations is done
+- "HTML elements" classes generation is done (please check missing tag)
+- "Enums" classes generation is done (please check missing tag)
+- "Custom Attribute Groups" are being generator (please check missing tag)
+### Missing:
+- ElementVisitor methods generation
+- sizesType not done in HTML elements attributes and in the Enums generation, corner case -> to be checked
+- Possible code refactoring, code repetition
+- CustomAttributes is not being generated
+
 # XsdAsmFaster
 
 <div align="justify"> 

@@ -1,4 +1,4 @@
-package org.xmlet.xsdfaster.classes.javapoet;
+package org.xmlet.xsdfaster.classes.javapoet.oldparser;
 
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.xmlet.xsdfaster.classes.javapoet.XsdPoetUtils.firstToUpper;
+import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class XsdPoetInterfaces {
 

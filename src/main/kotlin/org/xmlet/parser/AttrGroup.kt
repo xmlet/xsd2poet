@@ -12,6 +12,10 @@ class AttrGroup(val name: String) {
         references.add("CustomAttributeGroup")
     }
 
+    fun getAttrValuesList() : List<Pair<String,String>> = attrValues
+
+    fun getRefsList() : List<String> = references
+
     fun addValue(node: Node) {
         if (node.nodeName == "xsd:attribute") {
             val pair = Pair(
@@ -24,6 +28,4 @@ class AttrGroup(val name: String) {
             references.add(node.attributes.getNamedItem("ref").nodeValue)
         }
     }
-
-    fun getList() : List<Pair<String,String>> = attrValues
 }
