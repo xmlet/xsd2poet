@@ -12,6 +12,8 @@ abstract class ElementVisitor {
      */
     abstract fun visitAttributeBoolean(name: String?, value: String?)
 
+    abstract fun visitAttribute(var1: String?, var2: String?)
+
     abstract fun visitParent(var1: Element<*, *>?)
 
     abstract fun <R> visitText(var1: Text<out Element<*, *>?, R>?)

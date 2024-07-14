@@ -1,7 +1,6 @@
 package org.xmlet.xsdfaster.classes.javapoet.oldparser;
 
 import com.squareup.javapoet.TypeSpec.Builder;
-import org.xmlet.xsdfaster.classes.Utils.InterfaceInfo;
 import org.xmlet.xsdparser.xsdelements.*;
 
 
@@ -63,8 +62,6 @@ public class XsdPoetElements {
                 );
         if (Objects.equals(className, "dt"))
             System.out.println("print");
-
-        List<InterfaceInfo> interfaceInfoList = new ArrayList<>();
 
         if (element instanceof XsdGroup){
             XsdChoice choiceElement = choiceElements.size() == 1 ? choiceElements.get(0) : null;

@@ -41,6 +41,8 @@ public class ClassGenerator {
         primitiveAndStringTypes.put("sizesType", String.class);
     }
 
+    private static final Set<String> differentPackageCLasses = Set.of("CustomAttributeGroup", "Element", "Text", "TextGroup");
+
     public static final Set<String> specialTypes = Set.of("sizesType");
 
     private static final String ROOT_PATH = "./src/main/java";
@@ -92,7 +94,7 @@ public class ClassGenerator {
         interfaceBuilder
                 .addSuperinterface(
                         ParameterizedTypeName
-                                .get(ClassName.get(superInterfaceName.equals("TextGroup") ? ELEMENT_PACKAGE : CLASS_PACKAGE, superInterfaceName),
+                                .get(ClassName.get(differentPackageCLasses.contains(superInterfaceName) ? ELEMENT_PACKAGE : CLASS_PACKAGE, superInterfaceName),
                                         ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), TypeVariableName.get("Z")), zExtendsElement)
                 );
     }
@@ -101,7 +103,7 @@ public class ClassGenerator {
         interfaceBuilder
                 .addSuperinterface(
                         ParameterizedTypeName
-                                .get(ClassName.get(superInterfaceName.equals("TextGroup") ? ELEMENT_PACKAGE : CLASS_PACKAGE, superInterfaceName),
+                                .get(ClassName.get(differentPackageCLasses.contains(superInterfaceName) ? ELEMENT_PACKAGE : CLASS_PACKAGE, superInterfaceName),
                                         TypeVariableName.get("T"), TypeVariableName.get("Z"))
                 );
     }
