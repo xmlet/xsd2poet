@@ -10,10 +10,11 @@
 - "Enums" classes generation is done (please check missing tag)
 - "Custom Attribute Groups" are being generator (please check missing tag)
 - sizesType corner case is done
+- CustomAttributeGroup issue solved
 ### Missing:
 - ElementVisitor methods generation
 - Possible code refactoring, code repetition
-- CustomAttributes is not being generated
+
 
 # XsdAsmFaster
 
