@@ -6,16 +6,42 @@ import org.xmlet.parser.ElementXsd;
 
 import javax.lang.model.element.Modifier;
 
+import java.util.HashSet;
+import java.util.Objects;
+
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
 import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class ElementGenerator {
 
-    static public TypeSpec.Builder generateElementMethods(ElementXsd element) {
+    private static HashSet<String> createdFunctions = new HashSet<>();
+
+    static public TypeSpec.Builder generateElementMethods(ElementXsd element, TypeSpec.Builder elementVisitorBuilder) {
+
         String elementName = element.getNameLowerCase();
         String className = element.getUpperCaseName();
 
-        ClassName elementVisitor = ClassName.get(CLASS_PACKAGE, "ElementVisitor");
+        elementVisitorBuilder.addMethod(
+                MethodSpec
+                        .methodBuilder("visitElement" + className)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addTypeVariable(zExtendsElement)
+                        .addParameter(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className),zExtendsElement),elementName)
+                        .addStatement("this.visitElement(" + elementName + ")")
+                        .build()
+        );
+
+        elementVisitorBuilder.addMethod(
+                MethodSpec
+                        .methodBuilder("visitParent" + className)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addTypeVariable(zExtendsElement)
+                        .addParameter(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className),zExtendsElement),elementName)
+                        .addStatement("this.visitParent(" + elementName + ")")
+                        .build()
+        );
+
+        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
 
         MethodSpec firstConstructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
@@ -92,14 +118,20 @@ public class ElementGenerator {
 
         element.getReferencesList().forEach(reference -> addElementSuperInterface(builder, reference, className));
 
-        element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className));
+        element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className, elementVisitorBuilder));
 
         return builder;
     }
 
-    static private void addAttrFunction(TypeSpec.Builder builder, Pair<String, String> attrData, String className) {
+    static private void addAttrFunction(
+            TypeSpec.Builder builder,
+            Pair<String, String> attrData,
+            String className,
+            TypeSpec.Builder elementVisitorBuilder
+    ) {
         String name = attrData.component1().replace("-","");
         String attrName = "attr" + name;
+        String visitAttrFunctionName = "visitAttribute" + name;
 
         MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -107,10 +139,17 @@ public class ElementGenerator {
 
         String type = attrData.component2();
 
+        String getValueFunction;
+
         if (primitiveAndStringTypes.containsKey(type)) {
             method.addParameter(primitiveAndStringTypes.get(type), attrName);
+            if (primitiveAndStringTypes.get(type) == String.class)
+                getValueFunction = "";
+            else
+                getValueFunction = ".toString()";
         } else {
             method.addParameter(ClassName.get(CLASS_PACKAGE, "Enum" + firstToUpper(type)), attrName);
+            getValueFunction = ".getValue()";
         }
 
         if (specialTypes.contains(type)) {
@@ -118,9 +157,30 @@ public class ElementGenerator {
         }
 
         method
-                .addStatement("this.visitor.visitAttribute" + name + "(" + attrName + ")")
+                .addStatement("this.visitor." + visitAttrFunctionName + "(" + attrName + getValueFunction + ")")
                 .addStatement("return this.self()");
 
         builder.addMethod(method.build());
+
+        //to avoid building the same function several times in ElementVisitor
+        if (!createdFunctions.contains(visitAttrFunctionName)) {
+            MethodSpec.Builder attrMethod = MethodSpec
+                    .methodBuilder(visitAttrFunctionName)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(String.class, attrName);
+
+            String visitString;
+
+            if (type.contains("boolean")){
+                visitString = "visitAttributeBoolean";
+            } else {
+                visitString = "visitAttribute";
+            }
+            attrMethod.addStatement("this." + visitString + "(\"" + attrName+ "\", " + attrName +")");
+
+            createdFunctions.add(visitAttrFunctionName);
+
+            elementVisitorBuilder.addMethod(attrMethod.build());
+        }
     }
 }

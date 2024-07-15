@@ -67,7 +67,7 @@ public class EnumGenerator {
                             .methodBuilder("validateRestrictions")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addParameter(String.class, "value")
-                            .addStatement("$T.validatePattern( \"" + simpleType.getRestrictionList().get(0) + "\", value)", ClassName.get(RESTRICTION_VALIDATOR_PACKAGE, "RestrictionValidator"))
+                            .addStatement("$T.validatePattern( \"" + simpleType.getRestrictionList().get(0).replace("\\","\\\\") + "\", value)", ClassName.get(RESTRICTION_VALIDATOR_PACKAGE, "RestrictionValidator"))
                             .build());
 
         }

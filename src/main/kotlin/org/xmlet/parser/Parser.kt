@@ -61,7 +61,7 @@ class Parser {
             repeat(schema.childNodes.length) { y ->
                 val current = schema.childNodes.item(y)
                 if (current.nodeName.contains("xsd:")) {
-                    if (current.nodeName.contains("simpleType")) {
+                    if (current.nodeName.contains("simpleType") || current.nodeName.contains("complexType")) {
                         createSimpleType(current)
                     } else if (current.nodeName.contains("group")) {
                         createGroup(current)
@@ -131,16 +131,25 @@ class Parser {
     }
 
     private fun createSimpleType(current : Node) {
-        current.childNodes.getFirstNodeWithType(restrictionNodeSet)?.let { restriction ->
-            val simpleType = SimpleType(
-                    "Enum${firstToUpper( current.attributes.getNamedItem("name").nodeValue)}",
+        if (current.nodeName.contains("simpleType")) {
+            current.childNodes.getFirstNodeWithType(restrictionNodeSet)?.let { restriction ->
+                val simpleType = SimpleType(
+                    "Enum${firstToUpper(current.attributes.getNamedItem("name").nodeValue)}",
                     restriction.attributes.getNamedItem("base").nodeValue.substring("xsd:".length)
                 )
-            restriction.childNodes.forEachXsdElement {
-                simpleType.addValue(it);
+                restriction.childNodes.forEachXsdElement {
+                    simpleType.addValue(it);
+                }
+                if (simpleType.getList().isNotEmpty() || simpleType.getRestrictionList().isNotEmpty())
+                    simpleTypeList.add(simpleType)
             }
-            if (simpleType.getList().isNotEmpty() || simpleType.getRestrictionList().isNotEmpty())
-                simpleTypeList.add(simpleType)
+        } else {
+            current.childNodes.getFirstNodeWithType(hashSetOf("xsd:group"))?.let { group ->
+                val choice = Choice(firstToUpper(current.attributes.getNamedItem("name").nodeValue))
+                choice.addValue(group)
+                choiceList.add(choice)
+            }
+
         }
     }
 }

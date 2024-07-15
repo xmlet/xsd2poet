@@ -14,6 +14,7 @@ import static org.xmlet.xsdfaster.classes.javapoet.newparser.ChoiceGenerator.gen
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateEnumInterface;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateSimpleTypeMethods;
+import static org.xmlet.xsdfaster.classes.javapoet.newparser.InfrastructureGenerator.createElementVisitor;
 
 public class ClassGenerator {
 
@@ -28,14 +29,15 @@ public class ClassGenerator {
 
     static {
         primitiveAndStringTypes = new HashMap<>();
-        primitiveAndStringTypes.put("xsd:boolean", boolean.class);
-        primitiveAndStringTypes.put("xsd:byte", byte.class);
-        primitiveAndStringTypes.put("xsd:char", char.class);
-        primitiveAndStringTypes.put("xsd:short", short.class);
-        primitiveAndStringTypes.put("xsd:int", int.class);
-        primitiveAndStringTypes.put("xsd:long", long.class);
-        primitiveAndStringTypes.put("xsd:float", float.class);
-        primitiveAndStringTypes.put("xsd:double", double.class);
+        primitiveAndStringTypes.put("xsd:boolean", Boolean.class);
+        primitiveAndStringTypes.put("xsd:byte", Byte.class);
+        primitiveAndStringTypes.put("xsd:char", Character.class);
+        primitiveAndStringTypes.put("xsd:short", Short.class);
+        primitiveAndStringTypes.put("xsd:int", Integer.class);
+        primitiveAndStringTypes.put("xsd:positiveInteger", Integer.class);
+        primitiveAndStringTypes.put("xsd:long", Long.class);
+        primitiveAndStringTypes.put("xsd:float", Float.class);
+        primitiveAndStringTypes.put("xsd:double", Double.class);
         primitiveAndStringTypes.put("xsd:string", String.class);
         primitiveAndStringTypes.put("xsd:anyURI", String.class);
         primitiveAndStringTypes.put("sizesType", String.class);
@@ -49,7 +51,7 @@ public class ClassGenerator {
 
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster.newTest";
 
-    private static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
+    public static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
 
     public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdfaster.classes.infrastructure";
 
@@ -60,13 +62,18 @@ public class ClassGenerator {
 
     public static TypeVariableName zExtendsElement = TypeVariableName.get("Z", elementClassName);
 
+    TypeSpec.Builder elementVisitor;
 
     public void generateClasses(Parser parser) {
+        elementVisitor = createElementVisitor();
+
         parser.getElementsList().forEach(this::elementGenerator);
         parser.getChoiceList().forEach(this::choiceGenerator);
         parser.getGroupList().forEach(this::groupGenerator);
         generateSimpleType(parser);
         parser.getAttrGroupsList().forEach(this::attrGroupGenerator);
+
+        createClass(elementVisitor, ELEMENT_PACKAGE);
 
     }
 
@@ -81,14 +88,14 @@ public class ClassGenerator {
 
 
     private void elementGenerator(ElementXsd element) {
-        createClass(generateElementMethods(element));
+        createClass(generateElementMethods(element, elementVisitor));
     }
 
     private void choiceGenerator(Choice choice) {createClass(generateChoiceMethods(choice));}
 
     private void groupGenerator(Group group) {createClass(generateChoiceMethods(group));}
 
-    private void attrGroupGenerator(AttrGroup attrGroup) { createClass(generateAttributeGroupsMethods(attrGroup));}
+    private void attrGroupGenerator(AttrGroup attrGroup) { createClass(generateAttributeGroupsMethods(attrGroup, elementVisitor));}
 
     public static void addElementSuperInterface(TypeSpec.Builder interfaceBuilder, String superInterfaceName, String className) {
         interfaceBuilder
@@ -112,6 +119,17 @@ public class ClassGenerator {
         if (interfaceBuilder != null) {
             try {
                 JavaFile javaFile = JavaFile.builder(CLASS_PACKAGE, interfaceBuilder.build()).build();
+                javaFile.writeTo(new File(ROOT_PATH));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void createClass(TypeSpec.Builder interfaceBuilder, String path) {
+        if (interfaceBuilder != null) {
+            try {
+                JavaFile javaFile = JavaFile.builder(path, interfaceBuilder.build()).build();
                 javaFile.writeTo(new File(ROOT_PATH));
             } catch (IOException e) {
                 throw new RuntimeException(e);

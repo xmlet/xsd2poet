@@ -11,9 +11,9 @@
 - "Custom Attribute Groups" are being generator (please check missing tag)
 - sizesType corner case is done
 - CustomAttributeGroup issue solved
+- ElementVisitor methods generation -> done
 ### Missing:
-- ElementVisitor methods generation
-- Possible code refactoring, code repetition
+- Code refactoring there is some code repetition
 
 
 # XsdAsmFaster
