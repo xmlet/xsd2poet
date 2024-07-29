@@ -104,8 +104,8 @@ public class InfrastructureGenerator {
         builder.addMethod(
                 MethodSpec.methodBuilder("visitAwait")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addTypeVariable(TypeVariableName.get("M"))
+                        .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addParameter(TypeVariableName.get("E"), "var1")
                         .addParameter(ParameterizedTypeName.get(ClassName.get(AwaitConsumer.class),
                                 TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")
@@ -114,8 +114,8 @@ public class InfrastructureGenerator {
         builder.addMethod(
                 MethodSpec.methodBuilder("visitSuspending")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addTypeVariable(TypeVariableName.get("M"))
+                        .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addParameter(TypeVariableName.get("E"), "var1")
                         .addParameter(ParameterizedTypeName.get(ClassName.get(SuspendConsumer.class),
                                 TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")

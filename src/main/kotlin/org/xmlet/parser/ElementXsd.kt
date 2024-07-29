@@ -9,24 +9,43 @@ class ElementXsd(val nameLowerCase: String) {
 
     private val references: LinkedList<String> = LinkedList()
 
+    private val sequenceElements: LinkedList<String> = LinkedList()
+
+    private val sequenceGroupRef: LinkedList<String> = LinkedList()
+
     private var textGroupRemoved = false
 
     private val nameUpperCase = firstToUpper(nameLowerCase)
 
+    //this flag decides if you should create or not the Complete class
+    private var hasSequence = false
+
     init {
         references.add("TextGroup")
     }
+
+    fun getSequenceGroupRef() = sequenceGroupRef
+
+    fun hasSequence() = hasSequence
+    
+    fun setHasSequence() { hasSequence = true}
 
     fun getUpperCaseName() : String = nameUpperCase
     fun getAttrValuesList() : List<Pair<String, String>> = attrValues
 
     fun getReferencesList() : List<String> = references
 
+    fun getSequenceElements() : List<String> = sequenceElements
+
     private fun removeTextGroup() {
         if (!textGroupRemoved) {
             references.remove("TextGroup")
             textGroupRemoved = true
         }
+    }
+
+    fun addSequenceElement(sequenceElement : String) {
+        sequenceElements.add(sequenceElement)
     }
 
     fun addValue(node: Node) {
@@ -62,5 +81,7 @@ class ElementXsd(val nameLowerCase: String) {
         }
     }
 
-    fun getList() : List<Pair<String,String>> = attrValues
+    fun addSequenceGroup(nodeName: String) {
+        sequenceGroupRef.add(nodeName)
+    }
 }

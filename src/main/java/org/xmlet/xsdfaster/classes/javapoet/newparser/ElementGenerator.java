@@ -2,14 +2,16 @@ package org.xmlet.xsdfaster.classes.javapoet.newparser;
 
 import com.squareup.javapoet.*;
 import kotlin.Pair;
+import org.xmlet.htmlapifaster.ElementVisitor;
+import org.xmlet.parser.ElementComplete;
 import org.xmlet.parser.ElementXsd;
 
 import javax.lang.model.element.Modifier;
 
 import java.util.HashSet;
-import java.util.Objects;
 
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
+import static org.xmlet.xsdfaster.classes.javapoet.newparser.GeneralGenerator.generateSequenceMethod;
 import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class ElementGenerator {
@@ -21,15 +23,62 @@ public class ElementGenerator {
         String elementName = element.getNameLowerCase();
         String className = element.getUpperCaseName();
 
-        elementVisitorBuilder.addMethod(
-                MethodSpec
-                        .methodBuilder("visitElement" + className)
-                        .addModifiers(Modifier.PUBLIC)
-                        .addTypeVariable(zExtendsElement)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className),zExtendsElement),elementName)
-                        .addStatement("this.visitElement(" + elementName + ")")
-                        .build()
-        );
+        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
+
+        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, className, elementName);
+
+        element.getReferencesList().forEach(reference -> addElementSuperInterface(builder, reference, className));
+
+        element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className, elementVisitorBuilder));
+
+        if (element.hasSequence()) {
+            element.getSequenceElements().forEach(sequenceElement -> {
+                generateSequenceMethod(builder, className + firstToUpper(sequenceElement), sequenceElement);
+
+                TypeSpec.Builder sequenceClass = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, className + "Complete" , elementName, ElementType.SIMPLE);
+
+                addElementSuperInterface(sequenceClass, "CustomAttributeGroup", className + "Complete" );
+
+                createClass(sequenceClass);
+            });
+        }
+        return builder;
+    }
+
+    static public TypeSpec.Builder generateElementCompleteMethods(
+            ElementComplete element,
+            TypeSpec.Builder elementVisitorBuilder
+    ) {
+
+        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
+        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, element.getName(), element.getParentName(), ElementType.SIMPLE);
+
+        addElementSuperInterface(builder, "CustomAttributeGroup", element.getName());
+
+        element.getAttrs().forEach(attr -> {
+            generateSequenceMethod(builder, element.getName(), attr);
+        });
+
+        return builder;
+    }
+
+    private static TypeSpec.Builder generateCommonElementStructure(
+            TypeSpec.Builder elementVisitorBuilder,
+            ClassName elementVisitor,
+            String className,
+            String elementName,
+            ElementType elementType) {
+
+        if (elementType == ElementType.COMPLEX)
+            elementVisitorBuilder.addMethod(
+                    MethodSpec
+                            .methodBuilder("visitElement" + className)
+                            .addModifiers(Modifier.PUBLIC)
+                            .addTypeVariable(zExtendsElement)
+                            .addParameter(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className),zExtendsElement),elementName)
+                            .addStatement("this.visitElement(" + elementName + ")")
+                            .build()
+            );
 
         elementVisitorBuilder.addMethod(
                 MethodSpec
@@ -41,35 +90,46 @@ public class ElementGenerator {
                         .build()
         );
 
-        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
+        TypeSpec.Builder builder = TypeSpec
+                .classBuilder( className)
+                .addTypeVariable(zExtendsElement)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addField(elementVisitor, "visitor", Modifier.PROTECTED, Modifier.FINAL)
+                .addField(zExtendsElement, "parent", Modifier.PROTECTED, Modifier.FINAL);
 
-        MethodSpec firstConstructor = MethodSpec.constructorBuilder()
+
+        MethodSpec.Builder firstConstructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(elementVisitor, "visitor")
                 .addStatement("this.visitor = visitor")
-                .addStatement("this.parent = null")
-                .addStatement("visitor.visitElement" + className + "(this)")
-                .build();
+                .addStatement("this.parent = null");
 
-        MethodSpec secondConstructor = MethodSpec.constructorBuilder()
+        if (elementType == ElementType.COMPLEX)
+            firstConstructor.addStatement("visitor.visitElement" + className + "(this)");
+
+        MethodSpec.Builder secondConstructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(zExtendsElement, "parent")
                 .addStatement("this.parent = parent")
-                .addStatement("this.visitor = parent.getVisitor()")
-                .addStatement("this.visitor.visitElement" + className + "(this)")
-                .build();
+                .addStatement("this.visitor = parent.getVisitor()");
 
-        MethodSpec thirdConstrutor = MethodSpec.constructorBuilder()
+        if (elementType == ElementType.COMPLEX)
+            secondConstructor.addStatement("this.visitor.visitElement" + className + "(this)");
+
+        MethodSpec.Builder thirdConstrutor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(zExtendsElement, "parent")
                 .addParameter(elementVisitor, "visitor")
                 .addParameter(boolean.class, "shouldVisit")
                 .addStatement("this.parent = parent")
-                .addStatement("this.visitor = visitor")
-                .beginControlFlow("if (shouldVisit)")
-                .addStatement("visitor.visitElement" + className + "(this)")
-                .endControlFlow()
-                .build();
+                .addStatement("this.visitor = visitor");
+
+        if (elementType == ElementType.COMPLEX)
+            thirdConstrutor
+                    .beginControlFlow("if (shouldVisit)")
+                    .addStatement("visitor.visitElement" + className + "(this)")
+                    .endControlFlow();
+
 
         MethodSpec terminator = MethodSpec.methodBuilder("__")
                 .addModifiers(Modifier.PUBLIC)
@@ -101,26 +161,26 @@ public class ElementGenerator {
                 .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement))
                 .addStatement("return this")
                 .build();
-        TypeSpec.Builder builder = TypeSpec
-                .classBuilder(className)
-                .addTypeVariable(zExtendsElement)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addField(elementVisitor, "visitor", Modifier.PROTECTED, Modifier.FINAL)
-                .addField(zExtendsElement, "parent", Modifier.PROTECTED, Modifier.FINAL)
-                .addMethod(firstConstructor)
-                .addMethod(secondConstructor)
-                .addMethod(thirdConstrutor)
+
+        builder.addMethod(firstConstructor.build())
+                .addMethod(secondConstructor.build())
+                .addMethod(thirdConstrutor.build())
                 .addMethod(terminator)
                 .addMethod(getParent)
                 .addMethod(getVisitor)
                 .addMethod(getName)
                 .addMethod(self);
 
-        element.getReferencesList().forEach(reference -> addElementSuperInterface(builder, reference, className));
-
-        element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className, elementVisitorBuilder));
-
         return builder;
+    }
+
+    static private TypeSpec.Builder generateCommonElementStructure(
+            TypeSpec.Builder generateCommonElementStructure,
+            ClassName elementVisitor,
+            String className,
+            String elementName
+            ) {
+        return generateCommonElementStructure(generateCommonElementStructure, elementVisitor,className,elementName, ElementType.COMPLEX);
     }
 
     static private void addAttrFunction(
@@ -182,5 +242,10 @@ public class ElementGenerator {
 
             elementVisitorBuilder.addMethod(attrMethod.build());
         }
+    }
+
+    enum ElementType {
+        SIMPLE,
+        COMPLEX
     }
 }

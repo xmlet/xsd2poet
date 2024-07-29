@@ -26,11 +26,15 @@ class Parser {
 
     private val choiceList = LinkedList<Choice>()
 
+    private val elementCompleteList = LinkedList<ElementComplete>()
+
     private val restrictionNodeSet = hashSetOf("xsd:restriction")
 
     private val complexTypeSet = hashSetOf("xsd:complexType")
 
     private val choiceAndAllSet = hashSetOf("xsd:all", "xsd:choice")
+
+    fun getElementCompleteList() : List<ElementComplete> = elementCompleteList
 
     fun getAttrGroupsList(): List<AttrGroup> = attrGroupList
 
@@ -51,11 +55,7 @@ class Parser {
 
     }
 
-    fun parseXsdData(list: NodeList) {//, importance: Int) {
-        //val importanceStr = StringBuilder()
-        //repeat(importance) {
-        //    importanceStr.append("  ")
-        //}
+    fun parseXsdData(list: NodeList) {
         repeat(list.length) {x ->
             val schema = list.item(x)
             repeat(schema.childNodes.length) { y ->
@@ -63,16 +63,13 @@ class Parser {
                 if (current.nodeName.contains("xsd:")) {
                     if (current.nodeName.contains("simpleType") || current.nodeName.contains("complexType")) {
                         createSimpleType(current)
-                    } else if (current.nodeName.contains("group")) {
+                    } else if (current.isGroup()) {
                         createGroup(current)
                     } else if (current.nodeName.contains("attributeGroup")) {
                         createAttributeGroup(current)
-                    } else if (current.nodeName.contains("element")) {
+                    } else if (current.isElement()) {
                         createElement(current)
                     }
-                    //print(importanceStr)
-                    //println("${current.nodeName} - ${current.attributes.getNamedItem("name")}")
-                    //printInformation(current.childNodes, importance + 1)
                 }
             }
         }
@@ -87,6 +84,21 @@ class Parser {
                     createChoice(childNode,"${element.getUpperCaseName()}Choice")
                 } else if (childNode.isAll()) {
                     createChoice(childNode,"${element.getUpperCaseName()}All")
+                } else if (childNode.isSequence()) {
+                    element.setHasSequence()
+                    childNode.childNodes.forEachXsdElement {sequenceChildren ->
+                        var elementComplete: ElementComplete? = null
+                        if (sequenceChildren.isElement()) {
+                            element.addSequenceElement(sequenceChildren.attributes.getNamedItem("ref").nodeValue)
+                        } else if (sequenceChildren.isGroup()) {
+                            if (elementComplete == null) {
+                                elementComplete = ElementComplete(element.getUpperCaseName() + "Summary", element.getUpperCaseName())
+                                elementCompleteList.add(elementComplete)
+                            }
+                            elementComplete.addDependency(sequenceChildren.attributes.getNamedItem("ref").nodeValue)
+                        }
+                    }
+
                 }
             }
             elementList.add(element)
@@ -97,9 +109,15 @@ class Parser {
         }
     }
 
+    fun Node.isGroup() = nodeName.contains("group")
+
+    fun Node.isElement() = nodeName.contains("element")
+
     fun Node.isChoice() = nodeName.contains("choice")
 
     fun Node.isAll() = nodeName.contains("all")
+
+    fun Node.isSequence() = nodeName.contains("sequence")
 
     private fun createChoice(current: Node, name : String) {
         val choice = Choice(name)
@@ -149,7 +167,6 @@ class Parser {
                 choice.addValue(group)
                 choiceList.add(choice)
             }
-
         }
     }
 }

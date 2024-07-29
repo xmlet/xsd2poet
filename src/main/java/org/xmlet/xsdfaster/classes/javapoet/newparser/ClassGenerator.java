@@ -8,13 +8,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.AttributeGroupsGenerator.generateAttributeGroupsMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ChoiceGenerator.generateChoiceMethods;
+import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementCompleteMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateEnumInterface;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateSimpleTypeMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.InfrastructureGenerator.createElementVisitor;
+import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class ClassGenerator {
 
@@ -51,6 +54,8 @@ public class ClassGenerator {
 
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster.newTest";
 
+    //public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
+
     public static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
 
     public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdfaster.classes.infrastructure";
@@ -73,8 +78,26 @@ public class ClassGenerator {
         generateSimpleType(parser);
         parser.getAttrGroupsList().forEach(this::attrGroupGenerator);
 
+        Map<String, Group> groupMap = parser.getGroupList().stream()
+                .collect(Collectors.toMap(Group::getName, obj -> obj));
+
+        parser.getElementCompleteList().forEach(elementComplete -> {
+            elementComplete.getDependencyList().forEach(dependency -> {
+                addAttrDependencies(groupMap,dependency, elementComplete);
+            });
+            createClass(generateElementCompleteMethods(elementComplete, elementVisitor));
+        });
+
         createClass(elementVisitor, ELEMENT_PACKAGE);
 
+    }
+
+    private void addAttrDependencies(Map<String, Group> groupMap, String dependency, ElementComplete elementComplete) {
+        Group group = groupMap.get(firstToUpper(dependency));
+        if (group != null) {
+            elementComplete.addAttrs(group.getChoiceList());
+            group.getRefList().forEach(ref -> addAttrDependencies(groupMap, ref, elementComplete));
+        }
     }
 
     private void generateSimpleType(Parser parser) {
@@ -115,7 +138,7 @@ public class ClassGenerator {
                 );
     }
 
-    public void createClass(TypeSpec.Builder interfaceBuilder) {
+    public static void createClass(TypeSpec.Builder interfaceBuilder) {
         if (interfaceBuilder != null) {
             try {
                 JavaFile javaFile = JavaFile.builder(CLASS_PACKAGE, interfaceBuilder.build()).build();

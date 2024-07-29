@@ -36,7 +36,7 @@
         <xsd:complexType>
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="href" type="xsd:anyURI"/>
-            <!-- The possible values for target are any valid browsing context name or the values present in the browsingContextType -->
+            <!-- The possible values for target are any valid browsing context name or the values present in the formtargetBrowsingContextType -->
             <xsd:attribute name="target" type="xsd:string" />
         </xsd:complexType>
     </xsd:element>
@@ -45,13 +45,13 @@
         <xsd:complexType>
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="href" type="xsd:anyURI"/>
-            <xsd:attribute name="crossorigin" type="crossOriginType"/>
+            <xsd:attribute name="crossorigin" type="crossoriginCrossOriginType"/>
             <xsd:attribute name="rel" type="relType"/>
             <xsd:attribute name="rev" type="revType"/>
             <xsd:attribute name="media" type="mediaType" default="screen" />
             <xsd:attribute name="nonce" type="xsd:string"/>
             <xsd:attribute name="hreflang" type="xsd:string"/>
-            <xsd:attribute name="type" type="contentType"/>
+            <xsd:attribute name="type" type="TypeContentType"/>
             <xsd:attribute name="referrerpolicy" type="xsd:string"/>
             <xsd:attribute name="sizes" type="sizesType"/>
         </xsd:complexType>
@@ -72,7 +72,7 @@
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="media" type="mediaType" default="screen" />
             <xsd:attribute name="nonce" type="xsd:string"/>
-            <xsd:attribute name="type" type="contentType" default="text/css"/>
+            <xsd:attribute name="type" type="TypeContentType" default="text/css"/>
         </xsd:complexType>
     </xsd:element>
 
@@ -80,12 +80,12 @@
         <xsd:complexType mixed="true">
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="src" type="xsd:anyURI" />
-            <xsd:attribute name="type" type="scriptType" use="required"/>
+            <xsd:attribute name="type" type="TypeScriptType" use="required"/>
             <xsd:attribute name="charset" type="xsd:string" />
             <xsd:attribute name="async" type="xsd:boolean"/>
             <xsd:attribute name="defer" type="xsd:boolean"/>
             <xsd:attribute name="nonce" type="xsd:string"/>
-            <xsd:attribute name="crossorigin" type="crossOriginType"/>
+            <xsd:attribute name="crossorigin" type="crossoriginCrossOriginType"/>
         </xsd:complexType>
     </xsd:element>
 
@@ -182,7 +182,7 @@
                 <xsd:element ref="li" />
             </xsd:all>
             <xsd:attributeGroup ref="globalAttributes" />
-            <xsd:attribute name="type" type="olType"/>
+            <xsd:attribute name="type" type="TypeOlType"/>
             <xsd:attribute name="start" type="xsd:int"/>
             <xsd:attribute name="reversed" type="xsd:boolean" />
         </xsd:complexType>
@@ -235,13 +235,13 @@
             <xsd:group ref="transparentContentWithoutA" />
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="href" type="xsd:anyURI"/>
-            <!-- The possible values for target are any valid browsing context name or the values present in the browsingContextType -->
+            <!-- The possible values for target are any valid browsing context name or the values present in the formtargetBrowsingContextType -->
             <xsd:attribute name="target" type="xsd:string"/>
             <xsd:attribute name="download" type="xsd:string"/>
             <xsd:attribute name="rel" type="relType"/>
             <xsd:attribute name="rev" type="revType"/>
             <xsd:attribute name="hreflang" type="xsd:string"/>
-            <xsd:attribute name="type" type="simpleContentType"/>
+            <xsd:attribute name="type" type="TypeSimpleContentType"/>
             <xsd:attribute name="referrerpolicy" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
@@ -389,7 +389,7 @@
             <xsd:attribute name="src" type="xsd:anyURI" use="required"/>
             <xsd:attribute name="srcset" type="xsd:anyURI"/>
             <xsd:attribute name="sizes" type="sizesType"/>
-            <xsd:attribute name="crossorigin" type="crossOriginType"/>
+            <xsd:attribute name="crossorigin" type="crossoriginCrossOriginType"/>
             <xsd:attribute name="usemap" type="xsd:string"/>
             <xsd:attribute name="ismap" type="xsd:boolean" />
             <xsd:attribute name="width" type="xsd:long" />
@@ -501,7 +501,7 @@
             </xsd:choice>
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="src" type="xsd:anyURI" />
-            <xsd:attribute name="crossorigin" type="crossOriginType"/>
+            <xsd:attribute name="crossorigin" type="crossoriginCrossOriginType"/>
             <xsd:attribute name="preload" type="xsd:string" />
             <xsd:attribute name="autoplay" type="xsd:string" />
             <xsd:attribute name="loop" type="xsd:boolean" />
@@ -530,7 +530,7 @@
             </xsd:choice>
             <xsd:attributeGroup ref="globalAttributes" />
             <xsd:attribute name="src" type="xsd:anyURI" />
-            <xsd:attribute name="crossorigin" type="crossOriginType"/>
+            <xsd:attribute name="crossorigin" type="crossoriginCrossOriginType"/>
             <xsd:attribute name="poster" type="xsd:anyURI"/>
             <xsd:attribute name="preload" type="xsd:string" />
             <xsd:attribute name="autoplay" type="xsd:string" />
@@ -555,8 +555,8 @@
             <xsd:attribute name="accept-charset" type="xsd:string"/>
             <xsd:attribute name="action" type="xsd:anyURI" use="required" />
             <xsd:attribute name="autocomplete" type="autocompleteType"/>
-            <xsd:attribute name="enctype" type="enctypeType"/>
-            <xsd:attribute name="method" type="methodType" default="get"/>
+            <xsd:attribute name="enctype" type="formenctypeEnctypeType"/>
+            <xsd:attribute name="method" type="formmethodMethodType" default="get"/>
             <xsd:attribute name="name" type="xsd:string"/>
             <xsd:attribute name="novalidate" type="xsd:boolean"/>
             <xsd:attribute name="target" type="xsd:string" />
@@ -587,7 +587,7 @@
     <xsd:element name="input" >
         <xsd:complexType>
             <xsd:attributeGroup ref="globalAttributes" />
-            <xsd:attribute name="type" type="inputType"/>
+            <xsd:attribute name="type" type="TypeInputType"/>
             <xsd:attribute name="accept" type="xsd:string"/>
             <xsd:attribute name="alt" type="xsd:string"/>
             <xsd:attribute name="autocomplete" type="autocompleteType"/>
@@ -596,10 +596,10 @@
             <xsd:attribute name="disabled" type="xsd:boolean"/>
             <xsd:attribute name="form" type="xsd:string"/>
             <xsd:attribute name="formaction" type="xsd:anyURI"/>
-            <xsd:attribute name="formenctype" type="enctypeType"/>
-            <xsd:attribute name="formmethod" type="methodType" default="get"/>
+            <xsd:attribute name="formenctype" type="formenctypeEnctypeType"/>
+            <xsd:attribute name="formmethod" type="formmethodMethodType" default="get"/>
             <xsd:attribute name="formnovalidate" type="xsd:boolean"/>
-            <xsd:attribute name="formtarget" type="browsingContext"/>
+            <xsd:attribute name="formtarget" type="formtargetBrowsingContext"/>
             <xsd:attribute name="height" type="xsd:long"/>
             <xsd:attribute name="list" type="xsd:string"/>
             <xsd:attribute name="max" type="xsd:string"/>
@@ -629,13 +629,13 @@
             <xsd:attribute name="disabled" type="xsd:boolean"/>
             <xsd:attribute name="form" type="xsd:string"/>
             <xsd:attribute name="formaction" type="xsd:anyURI"/>
-            <xsd:attribute name="formenctype" type="enctypeType"/>
-            <xsd:attribute name="formmethod" type="methodType" default="get"/>
+            <xsd:attribute name="formenctype" type="formenctypeEnctypeType"/>
+            <xsd:attribute name="formmethod" type="formmethodMethodType" default="get"/>
             <xsd:attribute name="formnovalidate" type="xsd:boolean"/>
             <xsd:attribute name="formtarget" type="xsd:string"/>
             <xsd:attribute name="name" type="xsd:string"/>
             <xsd:attribute name="value" type="xsd:string"/>
-            <xsd:attribute name="type" type="buttonType" default="submit"/>
+            <xsd:attribute name="type" type="TypeButtonType" default="submit"/>
         </xsd:complexType>
     </xsd:element>
 
@@ -975,7 +975,7 @@
     </xsd:simpleType>
 
     <!-- DO NOT DELETE. Even if it isn't referred it can be used in target types -->
-    <xsd:simpleType name="browsingContext">
+    <xsd:simpleType name="formtargetBrowsingContext">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="_blank" />
             <xsd:enumeration value="_parent" />
@@ -984,7 +984,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="contentType">
+    <xsd:simpleType name="TypeContentType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="text/asp" />
             <xsd:enumeration value="text/asa" />
@@ -999,7 +999,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="simpleContentType">
+    <xsd:simpleType name="TypeSimpleContentType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="text/asp" />
             <xsd:enumeration value="text/asa" />
@@ -1024,14 +1024,14 @@
         <xsd:attributeGroup ref="globalAttributes" />
     </xsd:complexType>
 
-    <xsd:simpleType name="crossOriginType">
+    <xsd:simpleType name="crossoriginCrossOriginType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="anonymous"/>
             <xsd:enumeration value="use-credentials"/>
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="scriptType">
+    <xsd:simpleType name="TypeScriptType">
         <xsd:restriction base="xsd:string">
             <!-- Next rules according to https://www.rfc-editor.org/rfc/rfc9239.html -->
             <xsd:enumeration value="importmap" />
@@ -1057,7 +1057,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="olType">
+    <xsd:simpleType name="TypeOlType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="1"/>
             <xsd:enumeration value="a"/>
@@ -1084,7 +1084,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="enctypeType">
+    <xsd:simpleType name="formenctypeEnctypeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="multipart/form-data" />
             <xsd:enumeration value="application/x-www-form-urlencoded" />
@@ -1092,7 +1092,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="methodType">
+    <xsd:simpleType name="formmethodMethodType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="get" />
             <xsd:enumeration value="post" />
@@ -1100,7 +1100,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="inputType">
+    <xsd:simpleType name="TypeInputType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="button" />
             <xsd:enumeration value="checkbox" />
@@ -1127,7 +1127,7 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:simpleType name="buttonType">
+    <xsd:simpleType name="TypeButtonType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="button" />
             <xsd:enumeration value="reset" />
