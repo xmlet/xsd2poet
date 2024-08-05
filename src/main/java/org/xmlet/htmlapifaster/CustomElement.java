@@ -1,4 +1,4 @@
-package org.xmlet.htmlapifaster;
+/*package org.xmlet.htmlapifaster;
 
 public final class CustomElement<Z extends Element> implements GlobalAttributes<CustomElement<Z>, Z>, DivChoice<CustomElement<Z>, Z> {
     protected final Z parent;
@@ -32,4 +32,4 @@ public final class CustomElement<Z extends Element> implements GlobalAttributes<
     public final CustomElement<Z> self() {
         return this;
     }
-}
+}*/
