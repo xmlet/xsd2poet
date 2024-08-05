@@ -555,8 +555,8 @@
             <xsd:attribute name="accept-charset" type="xsd:string"/>
             <xsd:attribute name="action" type="xsd:anyURI" use="required" />
             <xsd:attribute name="autocomplete" type="autocompleteType"/>
-            <xsd:attribute name="enctype" type="formenctypeEnctypeType"/>
-            <xsd:attribute name="method" type="formmethodMethodType" default="get"/>
+            <xsd:attribute name="enctype" type="enctypeType"/>
+            <xsd:attribute name="method" type="methodType" default="get"/>
             <xsd:attribute name="name" type="xsd:string"/>
             <xsd:attribute name="novalidate" type="xsd:boolean"/>
             <xsd:attribute name="target" type="xsd:string" />
@@ -596,8 +596,8 @@
             <xsd:attribute name="disabled" type="xsd:boolean"/>
             <xsd:attribute name="form" type="xsd:string"/>
             <xsd:attribute name="formaction" type="xsd:anyURI"/>
-            <xsd:attribute name="formenctype" type="formenctypeEnctypeType"/>
-            <xsd:attribute name="formmethod" type="formmethodMethodType" default="get"/>
+            <xsd:attribute name="formenctype" type="enctypeType"/>
+            <xsd:attribute name="formmethod" type="methodType" default="get"/>
             <xsd:attribute name="formnovalidate" type="xsd:boolean"/>
             <xsd:attribute name="formtarget" type="formtargetBrowsingContext"/>
             <xsd:attribute name="height" type="xsd:long"/>
@@ -629,8 +629,8 @@
             <xsd:attribute name="disabled" type="xsd:boolean"/>
             <xsd:attribute name="form" type="xsd:string"/>
             <xsd:attribute name="formaction" type="xsd:anyURI"/>
-            <xsd:attribute name="formenctype" type="formenctypeEnctypeType"/>
-            <xsd:attribute name="formmethod" type="formmethodMethodType" default="get"/>
+            <xsd:attribute name="formenctype" type="enctypeType"/>
+            <xsd:attribute name="formmethod" type="methodType" default="get"/>
             <xsd:attribute name="formnovalidate" type="xsd:boolean"/>
             <xsd:attribute name="formtarget" type="xsd:string"/>
             <xsd:attribute name="name" type="xsd:string"/>
@@ -1084,11 +1084,27 @@
         </xsd:restriction>
     </xsd:simpleType>
 
+    <xsd:simpleType name="enctypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="multipart/form-data" />
+            <xsd:enumeration value="application/x-www-form-urlencoded" />
+            <xsd:enumeration value="text/plain" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
     <xsd:simpleType name="formenctypeEnctypeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="multipart/form-data" />
             <xsd:enumeration value="application/x-www-form-urlencoded" />
             <xsd:enumeration value="text/plain" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="methodType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="get" />
+            <xsd:enumeration value="post" />
+            <xsd:enumeration value="dialog" />
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -1250,7 +1266,7 @@
             <xsd:enumeration value="1"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <!-- ************************* -->
     <!--      Attribute Groups     -->
     <!-- ************************* -->
@@ -1889,4 +1905,3 @@
     </xsd:group>
 
 </xsd:schema>
-

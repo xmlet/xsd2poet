@@ -70,7 +70,7 @@ public interface Element<T extends Element, Z extends Element> extends AsyncElem
       return self;
    }
 
-//   default CustomElement<T> custom(String name) {
-//      return new CustomElement(this.self(), name);
-//   }
+   default CustomElement<T> custom(String name) {
+      return new CustomElement(this.self(), name);
+   }
 }

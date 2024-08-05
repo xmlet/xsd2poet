@@ -12,6 +12,7 @@ import java.util.HashSet;
 
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.GeneralGenerator.generateSequenceMethod;
+import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToLower;
 import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class ElementGenerator {
@@ -189,7 +190,15 @@ public class ElementGenerator {
             String className,
             TypeSpec.Builder elementVisitorBuilder
     ) {
-        String name = attrData.component1().replace("-","");
+        String[] strs = attrData.component1().split("-");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < strs.length; i++) {
+            sb.append(firstToUpper(strs[i]));
+        }
+
+        String name = sb.toString();
+
         String attrName = "attr" + name;
         String visitAttrFunctionName = "visitAttribute" + name;
 
@@ -224,10 +233,11 @@ public class ElementGenerator {
 
         //to avoid building the same function several times in ElementVisitor
         if (!createdFunctions.contains(visitAttrFunctionName)) {
+            String lowerName = name.equalsIgnoreCase("default") ? "var1" : firstToLower(name);
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder(visitAttrFunctionName)
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, attrName);
+                    .addParameter(String.class, lowerName);
 
             String visitString;
 
@@ -236,7 +246,7 @@ public class ElementGenerator {
             } else {
                 visitString = "visitAttribute";
             }
-            attrMethod.addStatement("this." + visitString + "(\"" + attrName+ "\", " + attrName +")");
+            attrMethod.addStatement("this." + visitString + "(\"" + lowerName + "\", " + lowerName +")");
 
             createdFunctions.add(visitAttrFunctionName);
 

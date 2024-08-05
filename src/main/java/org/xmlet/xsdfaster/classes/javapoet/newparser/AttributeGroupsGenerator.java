@@ -7,6 +7,7 @@ import org.xmlet.parser.ElementXsd;
 import javax.lang.model.element.Modifier;
 
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
+import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToLower;
 import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class AttributeGroupsGenerator {
@@ -26,7 +27,14 @@ public class AttributeGroupsGenerator {
         attrGroup.getRefsList().forEach(reference -> addOthersSuperInterface(builder, firstToUpper(reference), className));
 
         attrGroup.getAttrValuesList().forEach(pair -> {
-            String name = firstToUpper(pair.component1().replace("-",""));
+            String[] strs = pair.component1().split("-");
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < strs.length; i++) {
+                sb.append(firstToUpper(strs[i]));
+            }
+
+            String name = sb.toString();
             String attrName = "attr" + name;
 
             MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
@@ -52,10 +60,11 @@ public class AttributeGroupsGenerator {
             builder.addMethod(method.build());
 
 
+            String lowerName = name.equalsIgnoreCase("default") ? "var1" : firstToLower(name);
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder("visitAttribute" + name)
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, attrName);
+                    .addParameter(String.class, lowerName);
 
             String visitString;
 
@@ -64,7 +73,7 @@ public class AttributeGroupsGenerator {
             } else {
                 visitString = "visitAttribute";
             }
-            attrMethod.addStatement("this." + visitString + "(\"" + attrName+ "\", " + attrName +")");
+            attrMethod.addStatement("this." + visitString + "(\"" + lowerName + "\", " + lowerName +")");
 
             elementVisitorBuilder.addMethod(attrMethod.build());
         });

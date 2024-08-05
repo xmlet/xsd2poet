@@ -47,7 +47,7 @@ public class EnumGenerator {
 
             builder.addSuperinterface(
                     ParameterizedTypeName
-                            .get(ClassName.get(CLASS_PACKAGE, "EnumInterface"), TypeName.get(String.class))
+                            .get(ClassName.get(ENUM_INTERFACE_PACKAGE, "EnumInterface"), TypeName.get(String.class))
             );
 
             simpleType.getList().forEach(enumValue -> {

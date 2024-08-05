@@ -1,4 +1,4 @@
-package org.xmlet.xsdfaster.classes.infrastructure;
+package org.xmlet.xsdasmfaster.classes.infrastructure;
 
 /**
  * This exception is thrown whenever a Restriction is violated in any of the method defined in the {@link RestrictionValidator}

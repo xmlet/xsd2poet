@@ -52,13 +52,15 @@ public class ClassGenerator {
 
     private static final String ROOT_PATH = "./src/main/java";
 
-    public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster.newTest";
+    //public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster.newTest";
 
-    //public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
+    public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
+
+    public static final String ENUM_INTERFACE_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
 
     public static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
 
-    public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdfaster.classes.infrastructure";
+    public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
 
     public static ClassName elementClassName = ClassName.get(ELEMENT_PACKAGE, "Element");
 
