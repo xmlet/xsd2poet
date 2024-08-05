@@ -48,6 +48,8 @@ public class ClassGenerator {
 
     private static final Set<String> differentPackageCLasses = Set.of("CustomAttributeGroup", "Element", "Text", "TextGroup");
 
+    static final Set<String> invalidStrings = Set.of("class", "default", "for");
+
     public static final Set<String> specialTypes = Set.of("sizesType");
 
     private static final String ROOT_PATH = "./src/main/java";

@@ -60,7 +60,7 @@ public class AttributeGroupsGenerator {
             builder.addMethod(method.build());
 
 
-            String lowerName = name.equalsIgnoreCase("default") ? "var1" : firstToLower(name);
+            String lowerName = invalidStrings.contains(name.toLowerCase()) ? "var1" : firstToLower(name);
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder("visitAttribute" + name)
                     .addModifiers(Modifier.PUBLIC)

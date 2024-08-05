@@ -233,7 +233,7 @@ public class ElementGenerator {
 
         //to avoid building the same function several times in ElementVisitor
         if (!createdFunctions.contains(visitAttrFunctionName)) {
-            String lowerName = name.equalsIgnoreCase("default") ? "var1" : firstToLower(name);
+            String lowerName = invalidStrings.contains(name.toLowerCase()) ? "var1" : firstToLower(name);
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder(visitAttrFunctionName)
                     .addModifiers(Modifier.PUBLIC)
