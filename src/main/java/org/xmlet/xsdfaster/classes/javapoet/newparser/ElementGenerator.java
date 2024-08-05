@@ -233,11 +233,12 @@ public class ElementGenerator {
 
         //to avoid building the same function several times in ElementVisitor
         if (!createdFunctions.contains(visitAttrFunctionName)) {
-            String lowerName = invalidStrings.contains(name.toLowerCase()) ? "var1" : firstToLower(name);
+            String lowerName = firstToLower(name);
+            String varName = invalidStrings.contains(name.toLowerCase()) ? "var1" : lowerName;
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder(visitAttrFunctionName)
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, lowerName);
+                    .addParameter(String.class, varName);
 
             String visitString;
 
@@ -246,7 +247,7 @@ public class ElementGenerator {
             } else {
                 visitString = "visitAttribute";
             }
-            attrMethod.addStatement("this." + visitString + "(\"" + lowerName + "\", " + lowerName +")");
+            attrMethod.addStatement("this." + visitString + "(\"" + firstToLower(attrData.component1()) + "\", " + varName +")");
 
             createdFunctions.add(visitAttrFunctionName);
 

@@ -32,4 +32,6 @@ public final class CustomElement<Z extends Element> implements GlobalAttributes<
     public final CustomElement<Z> self() {
         return this;
     }
-}*/
+}
+*/
+

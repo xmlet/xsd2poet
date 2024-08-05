@@ -12,11 +12,11 @@
 - sizesType corner case is done
 - CustomAttributeGroup issue solved
 - ElementVisitor methods generation -> done
+- Details corner case done
+- Some fixed in ElementVisitor code genration
 ### Missing:
+- Investigate CustomElement reset system
 - Investigate ElementVisitor reset system to not be required
-- Investigate Details element corner case
-- Investigate issue when using the generated code in htmlflow
-  - "<class> is not abstract and does not implement abstract base class member public abstract fun"
 - Code refactoring there is some code repetition
 
 

@@ -60,11 +60,12 @@ public class AttributeGroupsGenerator {
             builder.addMethod(method.build());
 
 
-            String lowerName = invalidStrings.contains(name.toLowerCase()) ? "var1" : firstToLower(name);
+            String lowerName = firstToLower(name);
+            String varName = invalidStrings.contains(name.toLowerCase()) ? "var1" : lowerName;
             MethodSpec.Builder attrMethod = MethodSpec
                     .methodBuilder("visitAttribute" + name)
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, lowerName);
+                    .addParameter(String.class, varName);
 
             String visitString;
 
@@ -73,7 +74,7 @@ public class AttributeGroupsGenerator {
             } else {
                 visitString = "visitAttribute";
             }
-            attrMethod.addStatement("this." + visitString + "(\"" + lowerName + "\", " + lowerName +")");
+            attrMethod.addStatement("this." + visitString + "(\"" + firstToLower(pair.component1()) + "\", " + varName +")");
 
             elementVisitorBuilder.addMethod(attrMethod.build());
         });
