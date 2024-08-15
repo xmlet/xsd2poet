@@ -74,18 +74,4 @@ public class EnumGenerator {
 
         return builder;
     }
-
-
-    static public TypeSpec.Builder generateEnumInterface() {
-        return TypeSpec
-                .interfaceBuilder("EnumInterface")
-                .addTypeVariable(TypeVariableName.get("T"))
-                .addMethod(
-                        MethodSpec
-                                .methodBuilder("getValue")
-                                .addModifiers(Modifier.PUBLIC,Modifier.ABSTRACT)
-                                .returns(TypeVariableName.get("T"))
-                                .build()
-                );
-    }
 }

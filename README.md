@@ -13,10 +13,9 @@
 - CustomAttributeGroup issue solved
 - ElementVisitor methods generation -> done
 - Details corner case done
-- Some fixed in ElementVisitor code genration
+- Some element, fixed in ElementVisitor code genration
 ### Missing:
-- Investigate CustomElement reset system
-- Investigate ElementVisitor reset system to not be required
+- Missing Text and ElementExtensions classes to be created on Execution time to avoid any reset systems
 - Code refactoring there is some code repetition
 
 

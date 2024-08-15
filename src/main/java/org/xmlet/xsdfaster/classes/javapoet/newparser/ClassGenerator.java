@@ -14,9 +14,8 @@ import static org.xmlet.xsdfaster.classes.javapoet.newparser.AttributeGroupsGene
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ChoiceGenerator.generateChoiceMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementCompleteMethods;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateEnumInterface;
 import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateSimpleTypeMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.InfrastructureGenerator.createElementVisitor;
+import static org.xmlet.xsdfaster.classes.javapoet.newparser.InfrastructureGenerator.*;
 import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
 
 public class ClassGenerator {
@@ -62,24 +61,44 @@ public class ClassGenerator {
 
     public static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";
 
+    public static final String ASYNC_PACKAGE = "org.xmlet.htmlapifaster.async";
+
     public static final String RESTRICTION_VALIDATOR_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
 
     public static ClassName elementClassName = ClassName.get(ELEMENT_PACKAGE, "Element");
+
+    public static ClassName elementVisitorClassName = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
+
+    public static ClassName customElementClassName = ClassName.get(ELEMENT_PACKAGE, "CustomElement");
 
     static final TypeVariableName ELEMENT_T_Z =
             TypeVariableName.get("T", ParameterizedTypeName.get(elementClassName, TypeVariableName.get("T"), TypeVariableName.get("Z")));
 
     public static TypeVariableName zExtendsElement = TypeVariableName.get("Z", elementClassName);
 
+    public static TypeVariableName tExtendsElement = TypeVariableName.get("T", elementClassName);
+
+
     TypeSpec.Builder elementVisitor;
 
     public void generateClasses(Parser parser) {
+        //createClass(createCustomAttributeGroup(), CLASS_PACKAGE);
+        //createClass(createCustomElement(), CLASS_PACKAGE);
+        //createClass(createBaseElement(), CLASS_PACKAGE);
         elementVisitor = createElementVisitor();
+        //createClass(createEnumInterface(), CLASS_PACKAGE);
+        //createClass(createTextGroup(), CLASS_PACKAGE);
+
+
+        //createClass(createAsyncElement(), ASYNC_PACKAGE);
+        //createClass(createAwaitConsumer(),ASYNC_PACKAGE);
+        //createClass(createOnCompletion(),ASYNC_PACKAGE);
+
 
         parser.getElementsList().forEach(this::elementGenerator);
         parser.getChoiceList().forEach(this::choiceGenerator);
         parser.getGroupList().forEach(this::groupGenerator);
-        generateSimpleType(parser);
+        parser.getSimpleTypeList().forEach(this::simpleTypeGenerator);
         parser.getAttrGroupsList().forEach(this::attrGroupGenerator);
 
         Map<String, Group> groupMap = parser.getGroupList().stream()
@@ -102,11 +121,6 @@ public class ClassGenerator {
             elementComplete.addAttrs(group.getChoiceList());
             group.getRefList().forEach(ref -> addAttrDependencies(groupMap, ref, elementComplete));
         }
-    }
-
-    private void generateSimpleType(Parser parser) {
-        createClass(generateEnumInterface());
-        parser.getSimpleTypeList().forEach(this::simpleTypeGenerator);
     }
 
     private void simpleTypeGenerator(SimpleType simpleType) {

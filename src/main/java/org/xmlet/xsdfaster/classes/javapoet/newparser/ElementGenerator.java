@@ -2,7 +2,6 @@ package org.xmlet.xsdfaster.classes.javapoet.newparser;
 
 import com.squareup.javapoet.*;
 import kotlin.Pair;
-import org.xmlet.htmlapifaster.ElementVisitor;
 import org.xmlet.parser.ElementComplete;
 import org.xmlet.parser.ElementXsd;
 
