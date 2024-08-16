@@ -2,7 +2,7 @@ package org.xmlet.newParser
 
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import org.xmlet.javaPoetGenerator.Utils.firstToUpper
+import org.xmlet.utils.Utils.firstToUpper
 import java.io.File
 import java.util.HashSet
 import java.util.LinkedList

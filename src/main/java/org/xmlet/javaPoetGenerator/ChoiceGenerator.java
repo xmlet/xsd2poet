@@ -9,7 +9,7 @@ import javax.lang.model.element.Modifier;
 import java.util.List;
 
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
-import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.firstToUpper;
 
 public class ChoiceGenerator {
     static public TypeSpec.Builder generateChoiceMethods(Choice choice) {

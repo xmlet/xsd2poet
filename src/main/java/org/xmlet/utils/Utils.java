@@ -1,4 +1,4 @@
-package org.xmlet.javaPoetGenerator;
+package org.xmlet.utils;
 
 public class Utils {
     public static String firstToUpper(String name){

@@ -9,7 +9,7 @@ import javax.lang.model.element.Modifier;
 
 import static org.xmlet.javaPoetGenerator.ClassGenerator.CLASS_PACKAGE;
 import static org.xmlet.javaPoetGenerator.ClassGenerator.zExtendsElement;
-import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.firstToUpper;
 
 public class GeneralGenerator {
 

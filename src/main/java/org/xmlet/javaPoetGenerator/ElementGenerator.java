@@ -11,8 +11,8 @@ import java.util.HashSet;
 
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
 import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateSequenceMethod;
-import static org.xmlet.javaPoetGenerator.Utils.firstToLower;
-import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.firstToLower;
+import static org.xmlet.utils.Utils.firstToUpper;
 
 public class ElementGenerator {
 

@@ -1,7 +1,7 @@
 package org.xmlet.newParser
 
 import org.w3c.dom.Node
-import org.xmlet.javaPoetGenerator.Utils.firstToUpper
+import org.xmlet.utils.Utils.firstToUpper
 import java.util.*
 
 class ElementXsd(val nameLowerCase: String) {

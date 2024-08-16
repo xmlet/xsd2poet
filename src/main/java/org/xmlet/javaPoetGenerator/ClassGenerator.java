@@ -17,7 +17,7 @@ import static org.xmlet.javaPoetGenerator.ElementGenerator.generateElementComple
 import static org.xmlet.javaPoetGenerator.ElementGenerator.generateElementMethods;
 import static org.xmlet.javaPoetGenerator.EnumGenerator.generateSimpleTypeMethods;
 import static org.xmlet.javaPoetGenerator.InfrastructureGenerator.*;
-import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.firstToUpper;
 
 public class ClassGenerator {
     public static final Map<String,Class<?>> primitiveAndStringTypes;
@@ -83,6 +83,7 @@ public class ClassGenerator {
     TypeSpec.Builder elementVisitor;
 
     public void generateClasses(Parser parser) {
+
         createClass(createCustomAttributeGroup(), CLASS_PACKAGE);
         createClass(createCustomElement(), CLASS_PACKAGE);
         createClass(createBaseElement(), CLASS_PACKAGE);

@@ -633,19 +633,4 @@ public class InfrastructureGenerator {
         );
         return builder;
     }
-
-    /*
-    private static void deleteOldElementVisitor() {
-        Path filePath = Paths.get("src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java");
-
-        try {
-            if (Files.exists(filePath))
-                Files.delete(filePath);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-     */
 }
