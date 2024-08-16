@@ -1,4 +1,4 @@
-package org.xmlet.xsdfaster.classes.javapoet.newparser;
+package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
@@ -7,9 +7,9 @@ import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.CLASS_PACKAGE;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.zExtendsElement;
-import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
+import static org.xmlet.javaPoetGenerator.ClassGenerator.CLASS_PACKAGE;
+import static org.xmlet.javaPoetGenerator.ClassGenerator.zExtendsElement;
+import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
 
 public class GeneralGenerator {
 

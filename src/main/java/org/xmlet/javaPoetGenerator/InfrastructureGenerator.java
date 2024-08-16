@@ -1,16 +1,13 @@
-package org.xmlet.xsdfaster.classes.javapoet.newparser;
+package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
 import org.jetbrains.annotations.NotNull;
-import org.xmlet.htmlapifaster.SuspendConsumer;
-import org.xmlet.htmlapifaster.Text;
-import org.xmlet.htmlapifaster.async.AwaitConsumer;
 
 import javax.lang.model.element.Modifier;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
 
 public class InfrastructureGenerator {
 
@@ -80,7 +77,7 @@ public class InfrastructureGenerator {
                         .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                         .addAnnotation(Override.class)
                         .addParameter(ParameterSpec.builder(String.class, "txt").addAnnotation(NotNull.class).build())
-                        .addStatement("this.getVisitor().visitRaw(new $T(this.self(), this.getVisitor(), txt))", Text.class)
+                        .addStatement("this.getVisitor().visitRaw(new $T(this.self(), this.getVisitor(), txt))", textClassName)
                         .addStatement("return this.self()")
                         .returns(tExtendsElement)
                         .build()
@@ -106,7 +103,7 @@ public class InfrastructureGenerator {
                         .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                         .addParameter(r, "text")
                         .addTypeVariable(r)
-                        .addStatement("this.getVisitor().visitRaw(new $T(this.self(), this.getVisitor(), text))", Text.class)
+                        .addStatement("this.getVisitor().visitRaw(new $T(this.self(), this.getVisitor(), text))", textClassName)
                         .addStatement("return this.self()")
                         .returns(tExtendsElement)
                         .build()
@@ -364,7 +361,7 @@ public class InfrastructureGenerator {
                         .addTypeVariable(TypeVariableName.get("M"))
                         .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addParameter(TypeVariableName.get("E"), "var1")
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(AwaitConsumer.class),
+                        .addParameter(ParameterizedTypeName.get(awaitConsumerClassName,
                                 TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")
                         .build());
 
@@ -374,7 +371,7 @@ public class InfrastructureGenerator {
                         .addTypeVariable(TypeVariableName.get("M"))
                         .addTypeVariable(TypeVariableName.get("E", elementClassName))
                         .addParameter(TypeVariableName.get("E"), "var1")
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(SuspendConsumer.class),
+                        .addParameter(ParameterizedTypeName.get(suspendConsumerClassName,
                                 TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")
                         .build());
 
@@ -510,7 +507,8 @@ public class InfrastructureGenerator {
     }
 
     public static TypeSpec.Builder createOnCompletion() {
-        TypeSpec.Builder builder = TypeSpec
+
+        return TypeSpec
                 .interfaceBuilder("OnCompletion")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addMethod(
@@ -520,7 +518,119 @@ public class InfrastructureGenerator {
                                 .returns(void.class)
                                 .build()
                 );
+    }
 
+    public static TypeSpec.Builder createText() {
+        TypeVariableName z =
+                TypeVariableName.get(
+                        "Z",
+                        ParameterizedTypeName.get(
+                                elementClassName,
+                                TypeVariableName.get("?"),
+                                TypeVariableName.get("?")
+                        )
+                );
+
+        TypeVariableName r = TypeVariableName.get("R");
+
+        TypeSpec.Builder builder = TypeSpec
+                .classBuilder("Text")
+                .addModifiers(Modifier.PUBLIC)
+                .addTypeVariable(z)
+                .addTypeVariable(r)
+                .addField(FieldSpec
+                        .builder(String.class, "text")
+                        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                        .build()
+                )
+                .addField(FieldSpec
+                        .builder(z, "parent")
+                        .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                        .build()
+                )
+                .addField(FieldSpec
+                        .builder(elementVisitorClassName, "visitor")
+                        .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                        .build()
+                )
+                .addSuperinterface(
+                        ParameterizedTypeName.get(
+                                elementClassName,
+                                ParameterizedTypeName.get(
+                                        textClassName,
+                                        z,
+                                        r
+                                ), z
+                        )
+                );
+
+        builder.addMethod(
+                MethodSpec
+                        .constructorBuilder()
+                        .addParameter(z, "parent")
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(elementVisitorClassName, "visitor")
+                        .addParameter(r, "text")
+                        .addStatement("this.parent = parent")
+                        .addStatement("this.visitor = visitor")
+                        .addStatement("this.text = text.toString()")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("self")
+                        .returns(ParameterizedTypeName.get(textClassName, z, r))
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("return this")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("__")
+                        .returns(z)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("this.visitor.visitText(this)")
+                        .addStatement("return this.parent")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("getParent")
+                        .returns(z)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("return this.parent")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("getName")
+                        .returns(String.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addStatement("return \"\"")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("getVisitor")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(elementVisitorClassName)
+                        .addStatement("return this.visitor")
+                        .build()
+        );
+
+        builder.addMethod(
+                MethodSpec
+                        .methodBuilder("getValue")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(String.class)
+                        .addStatement("return this.text")
+                        .build()
+        );
         return builder;
     }
 

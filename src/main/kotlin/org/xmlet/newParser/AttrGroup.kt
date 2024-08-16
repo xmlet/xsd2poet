@@ -1,4 +1,4 @@
-package org.xmlet.parser
+package org.xmlet.newParser
 
 import org.w3c.dom.Node
 import java.util.*

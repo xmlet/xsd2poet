@@ -1,6 +1,5 @@
-package org.xmlet.parser
+package org.xmlet.newParser
 
-import org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper
 import java.util.*
 import kotlin.collections.HashSet
 

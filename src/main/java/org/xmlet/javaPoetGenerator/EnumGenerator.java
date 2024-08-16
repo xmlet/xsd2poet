@@ -1,12 +1,12 @@
-package org.xmlet.xsdfaster.classes.javapoet.newparser;
+package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
-import org.xmlet.parser.SimpleType;
+import org.xmlet.newParser.SimpleType;
 
 import javax.lang.model.element.Modifier;
 
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
-import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
+import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
 
 public class EnumGenerator {
 

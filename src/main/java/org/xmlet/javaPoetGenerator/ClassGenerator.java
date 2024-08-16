@@ -1,7 +1,8 @@
-package org.xmlet.xsdfaster.classes.javapoet.newparser;
+package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
-import org.xmlet.parser.*;
+import org.xmlet.kotlinPoetGenerator.KClassGenerator;
+import org.xmlet.newParser.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,23 +11,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.AttributeGroupsGenerator.generateAttributeGroupsMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ChoiceGenerator.generateChoiceMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementCompleteMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ElementGenerator.generateElementMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.EnumGenerator.generateSimpleTypeMethods;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.InfrastructureGenerator.*;
-import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
+import static org.xmlet.javaPoetGenerator.AttributeGroupsGenerator.generateAttributeGroupsMethods;
+import static org.xmlet.javaPoetGenerator.ChoiceGenerator.generateChoiceMethods;
+import static org.xmlet.javaPoetGenerator.ElementGenerator.generateElementCompleteMethods;
+import static org.xmlet.javaPoetGenerator.ElementGenerator.generateElementMethods;
+import static org.xmlet.javaPoetGenerator.EnumGenerator.generateSimpleTypeMethods;
+import static org.xmlet.javaPoetGenerator.InfrastructureGenerator.*;
+import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
 
 public class ClassGenerator {
-
-    public static void main(String[] args) {
-        ClassGenerator generator = new ClassGenerator();
-        Parser parser = new Parser();
-        parser.parse();
-        generator.generateClasses(parser);
-    }
-
     public static final Map<String,Class<?>> primitiveAndStringTypes;
 
     static {
@@ -51,7 +44,9 @@ public class ClassGenerator {
 
     public static final Set<String> specialTypes = Set.of("sizesType");
 
-    private static final String ROOT_PATH = "./src/main/java";
+    public static final String JAVA_ROOT_PATH = "./src/main/java";
+
+    public static final String KOTLIN_ROOT_PATH = "./src/main/kotlin";
 
     //public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster.newTest";
 
@@ -69,6 +64,12 @@ public class ClassGenerator {
 
     public static ClassName elementVisitorClassName = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
 
+    public static ClassName textClassName = ClassName.get(ELEMENT_PACKAGE, "Text");
+
+    public static ClassName awaitConsumerClassName = ClassName.get(ASYNC_PACKAGE, "AwaitConsumer");
+
+    public static ClassName suspendConsumerClassName = ClassName.get(ELEMENT_PACKAGE, "SuspendConsumer");
+
     public static ClassName customElementClassName = ClassName.get(ELEMENT_PACKAGE, "CustomElement");
 
     static final TypeVariableName ELEMENT_T_Z =
@@ -82,17 +83,20 @@ public class ClassGenerator {
     TypeSpec.Builder elementVisitor;
 
     public void generateClasses(Parser parser) {
-        //createClass(createCustomAttributeGroup(), CLASS_PACKAGE);
-        //createClass(createCustomElement(), CLASS_PACKAGE);
-        //createClass(createBaseElement(), CLASS_PACKAGE);
+        createClass(createCustomAttributeGroup(), CLASS_PACKAGE);
+        createClass(createCustomElement(), CLASS_PACKAGE);
+        createClass(createBaseElement(), CLASS_PACKAGE);
         elementVisitor = createElementVisitor();
-        //createClass(createEnumInterface(), CLASS_PACKAGE);
-        //createClass(createTextGroup(), CLASS_PACKAGE);
+        createClass(createEnumInterface(), CLASS_PACKAGE);
+        createClass(createTextGroup(), CLASS_PACKAGE);
 
 
-        //createClass(createAsyncElement(), ASYNC_PACKAGE);
-        //createClass(createAwaitConsumer(),ASYNC_PACKAGE);
-        //createClass(createOnCompletion(),ASYNC_PACKAGE);
+        createClass(createAsyncElement(), ASYNC_PACKAGE);
+        createClass(createAwaitConsumer(),ASYNC_PACKAGE);
+        createClass(createOnCompletion(),ASYNC_PACKAGE);
+        createClass(createText(), CLASS_PACKAGE);
+
+        KClassGenerator.Companion.createKotlinInfrastructureClasses();
 
 
         parser.getElementsList().forEach(this::elementGenerator);
@@ -156,22 +160,22 @@ public class ClassGenerator {
                 );
     }
 
-    public static void createClass(TypeSpec.Builder interfaceBuilder) {
-        if (interfaceBuilder != null) {
+    public static void createClass(TypeSpec.Builder builder) {
+        if (builder != null) {
             try {
-                JavaFile javaFile = JavaFile.builder(CLASS_PACKAGE, interfaceBuilder.build()).build();
-                javaFile.writeTo(new File(ROOT_PATH));
+                JavaFile javaFile = JavaFile.builder(CLASS_PACKAGE, builder.build()).build();
+                javaFile.writeTo(new File(JAVA_ROOT_PATH));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public void createClass(TypeSpec.Builder interfaceBuilder, String path) {
-        if (interfaceBuilder != null) {
+    public void createClass(TypeSpec.Builder builder, String path) {
+        if (builder != null) {
             try {
-                JavaFile javaFile = JavaFile.builder(path, interfaceBuilder.build()).build();
-                javaFile.writeTo(new File(ROOT_PATH));
+                JavaFile javaFile = JavaFile.builder(path, builder.build()).build();
+                javaFile.writeTo(new File(JAVA_ROOT_PATH));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

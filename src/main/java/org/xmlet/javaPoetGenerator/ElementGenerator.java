@@ -1,18 +1,18 @@
-package org.xmlet.xsdfaster.classes.javapoet.newparser;
+package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
 import kotlin.Pair;
-import org.xmlet.parser.ElementComplete;
-import org.xmlet.parser.ElementXsd;
+import org.xmlet.newParser.ElementComplete;
+import org.xmlet.newParser.ElementXsd;
 
 import javax.lang.model.element.Modifier;
 
 import java.util.HashSet;
 
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.ClassGenerator.*;
-import static org.xmlet.xsdfaster.classes.javapoet.newparser.GeneralGenerator.generateSequenceMethod;
-import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToLower;
-import static org.xmlet.xsdfaster.classes.javapoet.oldparser.XsdPoetUtils.firstToUpper;
+import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateSequenceMethod;
+import static org.xmlet.javaPoetGenerator.Utils.firstToLower;
+import static org.xmlet.javaPoetGenerator.Utils.firstToUpper;
 
 public class ElementGenerator {
 
