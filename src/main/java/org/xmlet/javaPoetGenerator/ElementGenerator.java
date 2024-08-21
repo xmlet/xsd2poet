@@ -4,13 +4,11 @@ import com.squareup.javapoet.*;
 import kotlin.Pair;
 import org.xmlet.newParser.ElementComplete;
 import org.xmlet.newParser.ElementXsd;
-
 import javax.lang.model.element.Modifier;
-
 import java.util.HashSet;
-
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
 import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateSequenceMethod;
+import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 import static org.xmlet.utils.Utils.firstToLower;
 import static org.xmlet.utils.Utils.firstToUpper;
 
@@ -20,14 +18,12 @@ public class ElementGenerator {
 
     static public TypeSpec.Builder generateElementMethods(ElementXsd element, TypeSpec.Builder elementVisitorBuilder) {
 
-        String elementName = element.getNameLowerCase();
+        String elementName = element.getLowerCaseName();
         String className = element.getUpperCaseName();
 
-        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
+        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, className, elementName);
 
-        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, className, elementName);
-
-        element.getReferencesList().forEach(reference -> addElementSuperInterface(builder, reference, className));
+        element.getRefsList().forEach(reference -> addElementSuperInterface(builder, reference, className));
 
         element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className, elementVisitorBuilder));
 
@@ -35,7 +31,7 @@ public class ElementGenerator {
             element.getSequenceElements().forEach(sequenceElement -> {
                 generateSequenceMethod(builder, className + firstToUpper(sequenceElement), sequenceElement);
 
-                TypeSpec.Builder sequenceClass = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, className + "Complete" , elementName, ElementType.SIMPLE);
+                TypeSpec.Builder sequenceClass = generateCommonElementStructure(elementVisitorBuilder, className + "Complete" , elementName, ElementType.SIMPLE);
 
                 addElementSuperInterface(sequenceClass, "CustomAttributeGroup", className + "Complete" );
 
@@ -50,13 +46,18 @@ public class ElementGenerator {
             TypeSpec.Builder elementVisitorBuilder
     ) {
 
-        ClassName elementVisitor = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
-        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, elementVisitor, element.getName(), element.getParentName(), ElementType.SIMPLE);
+        TypeSpec.Builder builder =
+                generateCommonElementStructure(
+                        elementVisitorBuilder,
+                        element.getFinalClassName(),
+                        element.getLowerCaseName(),
+                        ElementType.SIMPLE
+                );
 
-        addElementSuperInterface(builder, "CustomAttributeGroup", element.getName());
+        addElementSuperInterface(builder, "CustomAttributeGroup", element.getFinalClassName());
 
         element.getAttrs().forEach(attr -> {
-            generateSequenceMethod(builder, element.getName(), attr);
+            generateSequenceMethod(builder, element.getUpperCaseName(), attr);
         });
 
         return builder;
@@ -64,7 +65,6 @@ public class ElementGenerator {
 
     private static TypeSpec.Builder generateCommonElementStructure(
             TypeSpec.Builder elementVisitorBuilder,
-            ClassName elementVisitor,
             String className,
             String elementName,
             ElementType elementType) {
@@ -94,13 +94,13 @@ public class ElementGenerator {
                 .classBuilder( className)
                 .addTypeVariable(zExtendsElement)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addField(elementVisitor, "visitor", Modifier.PROTECTED, Modifier.FINAL)
+                .addField(elementVisitorClassName, "visitor", Modifier.PROTECTED, Modifier.FINAL)
                 .addField(zExtendsElement, "parent", Modifier.PROTECTED, Modifier.FINAL);
 
 
         MethodSpec.Builder firstConstructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(elementVisitor, "visitor")
+                .addParameter(elementVisitorClassName, "visitor")
                 .addStatement("this.visitor = visitor")
                 .addStatement("this.parent = null");
 
@@ -119,7 +119,7 @@ public class ElementGenerator {
         MethodSpec.Builder thirdConstrutor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PROTECTED)
                 .addParameter(zExtendsElement, "parent")
-                .addParameter(elementVisitor, "visitor")
+                .addParameter(elementVisitorClassName, "visitor")
                 .addParameter(boolean.class, "shouldVisit")
                 .addStatement("this.parent = parent")
                 .addStatement("this.visitor = visitor");
@@ -146,7 +146,7 @@ public class ElementGenerator {
 
         MethodSpec getVisitor = MethodSpec.methodBuilder("getVisitor")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .returns(elementVisitor)
+                .returns(elementVisitorClassName)
                 .addStatement("return this.visitor")
                 .build();
 
@@ -176,11 +176,10 @@ public class ElementGenerator {
 
     static private TypeSpec.Builder generateCommonElementStructure(
             TypeSpec.Builder generateCommonElementStructure,
-            ClassName elementVisitor,
             String className,
             String elementName
             ) {
-        return generateCommonElementStructure(generateCommonElementStructure, elementVisitor,className,elementName, ElementType.COMPLEX);
+        return generateCommonElementStructure(generateCommonElementStructure, className,elementName, ElementType.COMPLEX);
     }
 
     static private void addAttrFunction(

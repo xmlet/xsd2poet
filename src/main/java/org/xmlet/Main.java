@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         ClassGenerator generator = new ClassGenerator();
         Parser parser = new Parser();
-        parser.parse();
+        parser.parse("src/main/resources/html_5_2.xsd");
         generator.generateClasses(parser);
     }
 }

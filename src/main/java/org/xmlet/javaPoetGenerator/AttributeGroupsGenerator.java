@@ -2,10 +2,9 @@ package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
 import org.xmlet.newParser.AttrGroup;
-
 import javax.lang.model.element.Modifier;
-
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 import static org.xmlet.utils.Utils.firstToLower;
 import static org.xmlet.utils.Utils.firstToUpper;
 
@@ -15,7 +14,7 @@ public class AttributeGroupsGenerator {
             AttrGroup attrGroup,
             TypeSpec.Builder elementVisitorBuilder
     ) {
-        String className = firstToUpper(attrGroup.getName());
+        String className = attrGroup.getFinalClassName();
 
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder(className)
@@ -23,7 +22,7 @@ public class AttributeGroupsGenerator {
                 .addTypeVariable(ELEMENT_T_Z)
                 .addTypeVariable(zExtendsElement);
 
-        attrGroup.getRefsList().forEach(reference -> addOthersSuperInterface(builder, firstToUpper(reference), className));
+        attrGroup.getRefsList().forEach(reference -> addOthersSuperInterface(builder, reference));
 
         attrGroup.getAttrValuesList().forEach(pair -> {
             String[] strs = pair.component1().split("-");
@@ -38,7 +37,7 @@ public class AttributeGroupsGenerator {
 
             MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
                     .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-                    .returns(TypeVariableName.get("T"));
+                    .returns(t);
 
             String type = pair.component2();
 

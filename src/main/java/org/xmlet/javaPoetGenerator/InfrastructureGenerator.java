@@ -2,12 +2,8 @@ package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
 import org.jetbrains.annotations.NotNull;
-
 import javax.lang.model.element.Modifier;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
-import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 
 public class InfrastructureGenerator {
 
@@ -17,17 +13,11 @@ public class InfrastructureGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addTypeVariable(tExtendsElement)
                 .addTypeVariable(zExtendsElement)
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ASYNC_PACKAGE, "AsyncElement"), tExtendsElement))
+                .addSuperinterface(ParameterizedTypeName.get(asyncElementClassName, tExtendsElement))
                 .addSuperinterface(
                         ParameterizedTypeName.get(
-                                ClassName.get(
-                                        CLASS_PACKAGE,
-                                        "ElementExtensions"
-                                ), ParameterizedTypeName.get(
-                                        ClassName.get(CLASS_PACKAGE, "Element"),
-                                        tExtendsElement,
-                                        zExtendsElement
-                                )
+                                elementExtensionsClassName, 
+                                elementTExtendsElementZExtendsElement
                         )
                 );
 
@@ -43,7 +33,7 @@ public class InfrastructureGenerator {
                 MethodSpec
                         .methodBuilder("getVisitor")
                         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                        .returns(ClassName.get(ELEMENT_PACKAGE, "ElementVisitor"))
+                        .returns(elementVisitorClassName)
                         .build()
         );
 
@@ -91,11 +81,9 @@ public class InfrastructureGenerator {
                         .addAnnotation(NotNull.class)
                         .addParameter(ParameterSpec.builder(String.class, "$this$unaryPlus").addAnnotation(NotNull.class).build())
                         .addStatement("return addTextFromkotlin($$this$$unaryPlus)")
-                        .returns(ParameterizedTypeName.get(elementClassName, TypeVariableName.get("T"), TypeVariableName.get("Z")))
+                        .returns(ParameterizedTypeName.get(elementClassName, t, z))
                         .build()
         );
-
-        TypeVariableName r = TypeVariableName.get("R");
 
         builder.addMethod(
                 MethodSpec
@@ -109,14 +97,12 @@ public class InfrastructureGenerator {
                         .build()
         );
 
-        TypeVariableName m = TypeVariableName.get("M");
-
         builder.addMethod(
                 MethodSpec
                         .methodBuilder("await")
                         .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                         .addAnnotation(Override.class)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(ASYNC_PACKAGE, "AwaitConsumer"), TypeVariableName.get("T"), m), "asyncAction")
+                        .addParameter(ParameterizedTypeName.get(awaitConsumerClassName, t, m), "asyncAction")
                         .addTypeVariable(m)
                         .addStatement("final T self = self()")
                         .addStatement("this.getVisitor().visitAwait(self, asyncAction)")
@@ -125,19 +111,14 @@ public class InfrastructureGenerator {
                         .build()
         );
 
-        TypeVariableName u = TypeVariableName.get("U");
-
         builder.addMethod(
                 MethodSpec
                         .methodBuilder("dynamic")
                         .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                         .addParameter(
-                                ParameterizedTypeName.get(
-                                        ClassName.get(BiConsumer.class),
-                                        TypeVariableName.get("T"),
-                                        u
-                                ), "consumer")
-                        .addTypeVariable(u)
+                                ParameterizedTypeName.get(biConsumerClassName, t, u), 
+                                "consumer"
+                        ).addTypeVariable(u)
                         .addStatement("T self = this.self()")
                         .addStatement("this.getVisitor().visitDynamic(self, consumer)")
                         .addStatement("return self")
@@ -150,10 +131,7 @@ public class InfrastructureGenerator {
                         .methodBuilder("of")
                         .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                         .addParameter(
-                                ParameterizedTypeName.get(
-                                        ClassName.get(Consumer.class),
-                                        TypeVariableName.get("T")
-                                ), "consumer")
+                                ParameterizedTypeName.get(consumerClassName, t), "consumer")
                         .addStatement("T self = this.self()")
                         .addStatement("consumer.accept(self)")
                         .addStatement("return self")
@@ -194,21 +172,15 @@ public class InfrastructureGenerator {
                 )
                 .addSuperinterface(
                         ParameterizedTypeName.get(
-                                ClassName.get(ELEMENT_PACKAGE, "GlobalAttributes"),
-                                ParameterizedTypeName.get(
-                                        ClassName.get(ELEMENT_PACKAGE, "CustomElement"),
-                                        zExtendsElement
-                                ),
+                                globalAttributesClassName,
+                                customElementZExtendsElement,
                                 zExtendsElement
                         )
                 )
                 .addSuperinterface(
                         ParameterizedTypeName.get(
-                                ClassName.get(ELEMENT_PACKAGE, "DivChoice"),
-                                ParameterizedTypeName.get(
-                                        ClassName.get(ELEMENT_PACKAGE, "CustomElement"),
-                                        zExtendsElement
-                                ),
+                                divChoiceClassName,
+                                customElementZExtendsElement,
                                 zExtendsElement
                         )
                 )
@@ -265,7 +237,7 @@ public class InfrastructureGenerator {
         builder.addMethod(
                 MethodSpec
                         .methodBuilder("self")
-                        .returns(ParameterizedTypeName.get(customElementClassName, zExtendsElement))
+                        .returns(customElementZExtendsElement)
                         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                         .addStatement("return this")
                         .build()
@@ -275,8 +247,6 @@ public class InfrastructureGenerator {
     }
 
     public static TypeSpec.Builder createElementVisitor() {
-
-        //deleteOldElementVisitor();
 
         TypeSpec.Builder builder = TypeSpec
                 .classBuilder("ElementVisitor")
@@ -316,15 +286,18 @@ public class InfrastructureGenerator {
                         .addParameter(elementClassName, "element")
                         .build()
         );
-
-        TypeVariableName rType = TypeVariableName.get("R");
-        ParameterizedTypeName textType = ParameterizedTypeName.get(ClassName.get(ELEMENT_PACKAGE, "Text"), WildcardTypeName.subtypeOf(elementClassName), rType);
+        ParameterizedTypeName textType = 
+                ParameterizedTypeName.get(
+                        textClassName, 
+                        WildcardTypeName.subtypeOf(elementClassName), 
+                        r
+                );
 
         builder.addMethod(
                 MethodSpec
                         .methodBuilder("visitText")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("R"))
+                        .addTypeVariable(r)
                         .addParameter(textType, "var1")
                         .build());
 
@@ -332,7 +305,7 @@ public class InfrastructureGenerator {
                 MethodSpec
                         .methodBuilder("visitRaw")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("R"))
+                        .addTypeVariable(r)
                         .addParameter(textType, "var1")
                         .build());
 
@@ -341,7 +314,7 @@ public class InfrastructureGenerator {
                 MethodSpec
                         .methodBuilder("visitComment")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("R"))
+                        .addTypeVariable(r)
                         .addParameter(textType, "var1")
                         .build());
 
@@ -349,31 +322,33 @@ public class InfrastructureGenerator {
                 MethodSpec.methodBuilder("visitDynamic")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                         .addTypeVariable(TypeVariableName.get("E", elementClassName))
-                        .addTypeVariable(TypeVariableName.get("U"))
-                        .addParameter(TypeVariableName.get("E"), "var1")
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(BiConsumer.class),
-                                TypeVariableName.get("E"), TypeVariableName.get("U")), "var2")
+                        .addTypeVariable(u)
+                        .addParameter(e, "var1")
+                        .addParameter(ParameterizedTypeName.get(biConsumerClassName,
+                                e, u), "var2")
                         .build());
 
         builder.addMethod(
                 MethodSpec.methodBuilder("visitAwait")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("M"))
+                        .addTypeVariable(m)
                         .addTypeVariable(TypeVariableName.get("E", elementClassName))
-                        .addParameter(TypeVariableName.get("E"), "var1")
-                        .addParameter(ParameterizedTypeName.get(awaitConsumerClassName,
-                                TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")
-                        .build());
+                        .addParameter(e, "var1")
+                        .addParameter(
+                                ParameterizedTypeName.get(awaitConsumerClassName, e, m), 
+                                "var2"
+                        ).build());
 
         builder.addMethod(
                 MethodSpec.methodBuilder("visitSuspending")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addTypeVariable(TypeVariableName.get("M"))
+                        .addTypeVariable(m)
                         .addTypeVariable(TypeVariableName.get("E", elementClassName))
-                        .addParameter(TypeVariableName.get("E"), "var1")
-                        .addParameter(ParameterizedTypeName.get(suspendConsumerClassName,
-                                TypeVariableName.get("E"), TypeVariableName.get("M")), "var2")
-                        .build());
+                        .addParameter(e, "var1")
+                        .addParameter(
+                                ParameterizedTypeName.get(suspendConsumerClassName, e, m), 
+                                "var2"
+                        ).build());
 
         return builder;
     }
@@ -383,10 +358,8 @@ public class InfrastructureGenerator {
                 .interfaceBuilder("TextGroup")
                 .addTypeVariable(tExtendsElement)
                 .addTypeVariable(zExtendsElement)
-                .addSuperinterface(ParameterizedTypeName.get(elementClassName, tExtendsElement, zExtendsElement))
+                .addSuperinterface(elementTExtendsElementZExtendsElement)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-
-        TypeVariableName r = TypeVariableName.get("R");
 
 
         builder.addMethod(
@@ -395,7 +368,7 @@ public class InfrastructureGenerator {
                         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
                         .addTypeVariable(r)
                         .addParameter(r, "text")
-                        .addStatement("this.getVisitor().visitText(new $T(this.self(), this.getVisitor(), text))", ClassName.get(ELEMENT_PACKAGE, "Text"))
+                        .addStatement("this.getVisitor().visitText(new $T(this.self(), this.getVisitor(), text))", textClassName)
                         .addStatement("return this.self()")
                         .returns(tExtendsElement)
                         .build()
@@ -407,7 +380,7 @@ public class InfrastructureGenerator {
                         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
                         .addTypeVariable(r)
                         .addParameter(r, "comment")
-                        .addStatement("this.getVisitor().visitComment(new $T(this.self(), this.getVisitor(), comment))", ClassName.get(ELEMENT_PACKAGE, "Text"))
+                        .addStatement("this.getVisitor().visitComment(new $T(this.self(), this.getVisitor(), comment))", textClassName)
                         .addStatement("return this.self()")
                         .returns(tExtendsElement)
                         .build()
@@ -419,12 +392,12 @@ public class InfrastructureGenerator {
     public static TypeSpec.Builder createEnumInterface() {
         return TypeSpec
                 .interfaceBuilder("EnumInterface")
-                .addTypeVariable(TypeVariableName.get("T"))
+                .addTypeVariable(t)
                 .addMethod(
                         MethodSpec
                                 .methodBuilder("getValue")
                                 .addModifiers(Modifier.PUBLIC,Modifier.ABSTRACT)
-                                .returns(TypeVariableName.get("T"))
+                                .returns(t)
                                 .build()
                 );
     }
@@ -434,7 +407,7 @@ public class InfrastructureGenerator {
                 .interfaceBuilder("CustomAttributeGroup")
                 .addTypeVariable(tExtendsElement)
                 .addTypeVariable(zExtendsElement)
-                .addSuperinterface(ParameterizedTypeName.get(elementClassName, tExtendsElement, zExtendsElement))
+                .addSuperinterface(elementTExtendsElementZExtendsElement)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
 
         builder.addMethod(
@@ -454,7 +427,6 @@ public class InfrastructureGenerator {
 
     public static TypeSpec.Builder createAsyncElement() {
         TypeVariableName eExtendsElement = TypeVariableName.get("E", elementClassName);
-        TypeVariableName m = TypeVariableName.get("M");
 
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder("AsyncElement")
@@ -467,11 +439,7 @@ public class InfrastructureGenerator {
                         .addTypeVariable(m)
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                         .addParameter(
-                                ParameterizedTypeName.get(
-                                        ClassName.get(ASYNC_PACKAGE, "AwaitConsumer"),
-                                        eExtendsElement,
-                                        m
-                                ),
+                                ParameterizedTypeName.get(awaitConsumerClassName, eExtendsElement, m),
                                 "asyncAction"
                         )
                         .returns(eExtendsElement)
@@ -482,10 +450,6 @@ public class InfrastructureGenerator {
     }
 
     public static TypeSpec.Builder createAwaitConsumer() {
-        TypeVariableName t = TypeVariableName.get("T");
-
-        TypeVariableName m = TypeVariableName.get("M");
-
 
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder("AwaitConsumer")
@@ -499,7 +463,7 @@ public class InfrastructureGenerator {
                         .addParameter(t, "first")
                         .addParameter(m, "model")
                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                        .addParameter(ClassName.get(ASYNC_PACKAGE, "OnCompletion"), "third")
+                        .addParameter(onCompletitionClassName, "third")
                         .build()
         );
 
@@ -531,8 +495,6 @@ public class InfrastructureGenerator {
                         )
                 );
 
-        TypeVariableName r = TypeVariableName.get("R");
-
         TypeSpec.Builder builder = TypeSpec
                 .classBuilder("Text")
                 .addModifiers(Modifier.PUBLIC)
@@ -556,11 +518,8 @@ public class InfrastructureGenerator {
                 .addSuperinterface(
                         ParameterizedTypeName.get(
                                 elementClassName,
-                                ParameterizedTypeName.get(
-                                        textClassName,
-                                        z,
-                                        r
-                                ), z
+                                ParameterizedTypeName.get(textClassName, z, r),
+                                z
                         )
                 );
 

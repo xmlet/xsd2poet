@@ -1,48 +1,54 @@
 package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
-import org.xmlet.newParser.Choice;
-import org.xmlet.newParser.Group;
-
+import org.xmlet.newParser.BaseChoiceGroup;
 import javax.lang.model.element.Modifier;
-
 import java.util.List;
-
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 import static org.xmlet.utils.Utils.firstToUpper;
 
+/**
+ * This class generates Choice Interfaces for the generated library
+ * */
 public class ChoiceGenerator {
-    static public TypeSpec.Builder generateChoiceMethods(Choice choice) {
-        return generateChoiceMethods(choice.getName(), choice.getRefList(), choice.getChoiceList());
+    static public TypeSpec.Builder generateChoiceMethods(BaseChoiceGroup baseChoiceGroup) {
+        return generateChoiceMethods(
+                baseChoiceGroup.getFinalClassName(),
+                baseChoiceGroup.getRefsList(),
+                baseChoiceGroup.getBaseClassValuesList()
+        );
     }
 
-    static public TypeSpec.Builder generateChoiceMethods(Group group) {
-        return generateChoiceMethods(group.getName(), group.getRefList(), group.getChoiceList());
-    }
+    /**
+     *
+     * @param className the class name of the interface being generated
+     * @param refList list of the super classes this interface will extend
+     * @param choiceList list of all the methods that have to be added to the interface
+     * */
     static public TypeSpec.Builder generateChoiceMethods(
-            String elementName,
+            String className,
             List<String> refList,
             List<String> choiceList
     ) {
-        String className = firstToUpper(elementName);
 
         TypeSpec.Builder builder = TypeSpec
-                .interfaceBuilder(elementName)
+                .interfaceBuilder(className)
                 .addModifiers(Modifier.PUBLIC)
                 .addTypeVariable(ELEMENT_T_Z)
                 .addTypeVariable(zExtendsElement);
 
-        refList.forEach(reference -> addOthersSuperInterface(builder, firstToUpper(reference), className));
+        refList.forEach(reference -> addOthersSuperInterface(builder, reference));
 
 
-        choiceList.forEach(currentChoice -> {
-            String name = firstToUpper(currentChoice);
+        choiceList.forEach(choiceLowerCaseName -> {
+            String choiceUpperCaseName = firstToUpper(choiceLowerCaseName);
             builder.addMethod(
                     MethodSpec
-                            .methodBuilder(currentChoice)
+                            .methodBuilder(choiceLowerCaseName)
                             .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-                            .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, name), ELEMENT_T_Z))
-                            .addStatement("return new " + name + "(this.self())")
+                            .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, choiceUpperCaseName), ELEMENT_T_Z))
+                            .addStatement("return new " + choiceUpperCaseName + "(this.self())")
                             .build()
             );
         });
