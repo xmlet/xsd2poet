@@ -6,56 +6,99 @@ import org.xmlet.newParser.ElementComplete;
 import org.xmlet.newParser.ElementXsd;
 import javax.lang.model.element.Modifier;
 import java.util.HashSet;
+
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateAttrFunction;
 import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateSequenceMethod;
 import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
-import static org.xmlet.utils.Utils.firstToLower;
-import static org.xmlet.utils.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.*;
+import static org.xmlet.utils.Utils.getVisitAttrName;
 
+
+/**
+ * This class has the objective to create a java file for each HTML Element
+ * */
 public class ElementGenerator {
 
+    //Set used to avoid creating duplicated function in elementVisitor
     private static HashSet<String> createdFunctions = new HashSet<>();
 
     static public TypeSpec.Builder generateElementMethods(ElementXsd element, TypeSpec.Builder elementVisitorBuilder) {
 
-        String elementName = element.getLowerCaseName();
-        String className = element.getUpperCaseName();
+        String lowerCaseName = element.getLowerCaseName();
+        String className = element.getFinalClassName();
 
-        TypeSpec.Builder builder = generateCommonElementStructure(elementVisitorBuilder, className, elementName);
+        //generates the common element structure of all the elements, it's complex because it's a "normal" html element
+        TypeSpec.Builder builder = generateComplexCommonElementStructure(elementVisitorBuilder, className, lowerCaseName);
 
+        //generates the imports of this element
         element.getRefsList().forEach(reference -> addElementSuperInterface(builder, reference, className));
 
+        //generates the attributes of this element
         element.getAttrValuesList().forEach(pair -> addAttrFunction(builder, pair, className, elementVisitorBuilder));
 
+        //generates the sequence logic, if the element had a sequence in the xsd file
+        handleSequence(element, builder, elementVisitorBuilder);
+
+        return builder;
+    }
+
+    /**
+     * logic to handle elements that had a xsd:sequence in the xsd file
+     * */
+    static private void handleSequence(
+            ElementXsd element,
+            TypeSpec.Builder builder,
+            TypeSpec.Builder elementVisitorBuilder
+    ) {
         if (element.hasSequence()) {
             element.getSequenceElements().forEach(sequenceElement -> {
-                generateSequenceMethod(builder, className + firstToUpper(sequenceElement), sequenceElement);
+                /**
+                 * generate the sequence method in the Element class for each xsd:element
+                 * <xsd:sequence>
+                 *      <xsd:element ref="summary"/>  <--- for each of xsd:element inside a xsd:sequence
+                 *              ...
+                 * </xsd:sequence>
+                 * */
+                generateSequenceMethod(builder, element.getFinalClassName() + firstToUpper(sequenceElement), sequenceElement);
 
-                TypeSpec.Builder sequenceClass = generateCommonElementStructure(elementVisitorBuilder, className + "Complete" , elementName, ElementType.SIMPLE);
+                //this logic is to create the <ElementName>Complete class
+                String completeClassName = element.getFinalClassName() + "Complete";
+                //created the simple structure of a element
+                TypeSpec.Builder sequenceClass =
+                        generateSimpleCommonElementStructure(
+                                elementVisitorBuilder,
+                                completeClassName,
+                                element.getLowerCaseName()
+                        );
 
-                addElementSuperInterface(sequenceClass, "CustomAttributeGroup", className + "Complete" );
+                //It always has the CustomAttributeGroup has a super interface
+                addElementSuperInterface(sequenceClass, "CustomAttributeGroup", completeClassName );
 
                 createClass(sequenceClass);
             });
         }
-        return builder;
     }
 
+    /**
+     * This method is to generate the "<Element Name>Complete" methods
+     * */
     static public TypeSpec.Builder generateElementCompleteMethods(
             ElementComplete element,
             TypeSpec.Builder elementVisitorBuilder
     ) {
 
-        TypeSpec.Builder builder =
-                generateCommonElementStructure(
-                        elementVisitorBuilder,
-                        element.getFinalClassName(),
-                        element.getLowerCaseName(),
-                        ElementType.SIMPLE
-                );
+        // generates the simple structure
+        TypeSpec.Builder builder = generateSimpleCommonElementStructure(
+                elementVisitorBuilder,
+                element.getFinalClassName(),
+                element.getLowerCaseName()
+        );
 
+        //generates the superInterace
         addElementSuperInterface(builder, "CustomAttributeGroup", element.getFinalClassName());
 
+        //generates a method for each attribute
         element.getAttrs().forEach(attr -> {
             generateSequenceMethod(builder, element.getUpperCaseName(), attr);
         });
@@ -63,6 +106,11 @@ public class ElementGenerator {
         return builder;
     }
 
+    /**
+     * Generate the common element structure.
+     * All elements will have the same structure
+     * With some exceptions that some have some more methods than others (corner cases Ex:DetailsComplete or DetailsSummary)
+     * */
     private static TypeSpec.Builder generateCommonElementStructure(
             TypeSpec.Builder elementVisitorBuilder,
             String className,
@@ -174,7 +222,7 @@ public class ElementGenerator {
         return builder;
     }
 
-    static private TypeSpec.Builder generateCommonElementStructure(
+    static private TypeSpec.Builder generateComplexCommonElementStructure(
             TypeSpec.Builder generateCommonElementStructure,
             String className,
             String elementName
@@ -182,42 +230,34 @@ public class ElementGenerator {
         return generateCommonElementStructure(generateCommonElementStructure, className,elementName, ElementType.COMPLEX);
     }
 
+    static private TypeSpec.Builder generateSimpleCommonElementStructure(
+            TypeSpec.Builder generateCommonElementStructure,
+            String className,
+            String elementName
+    ) {
+        return generateCommonElementStructure(generateCommonElementStructure, className,elementName, ElementType.SIMPLE);
+    }
+
+
+
+    // This function has the objective to add the attribute functions to each HTML element that requires it
     static private void addAttrFunction(
             TypeSpec.Builder builder,
-            Pair<String, String> attrData,
+            Pair<String, String> pair,
             String className,
             TypeSpec.Builder elementVisitorBuilder
     ) {
-        String[] strs = attrData.component1().split("-");
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < strs.length; i++) {
-            sb.append(firstToUpper(strs[i]));
-        }
-
-        String name = sb.toString();
-
-        String attrName = "attr" + name;
-        String visitAttrFunctionName = "visitAttribute" + name;
+        String name = generateAttrName(pair);
+        String attrName = getAttrName(name);
+        String visitAttrFunctionName = getVisitAttrName(name);
 
         MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement));
 
-        String type = attrData.component2();
+        String type = pair.component2();
 
-        String getValueFunction;
-
-        if (primitiveAndStringTypes.containsKey(type)) {
-            method.addParameter(primitiveAndStringTypes.get(type), attrName);
-            if (primitiveAndStringTypes.get(type) == String.class)
-                getValueFunction = "";
-            else
-                getValueFunction = ".toString()";
-        } else {
-            method.addParameter(ClassName.get(CLASS_PACKAGE, "Enum" + firstToUpper(type)), attrName);
-            getValueFunction = ".getValue()";
-        }
+        String getValueFunction = getValueFunctionAndAddParameter(type, method, attrName);
 
         if (specialTypes.contains(type)) {
             method.addStatement("$T.validateRestrictions(" + attrName + ")",ClassName.get(CLASS_PACKAGE, "AttrSizesString") );
@@ -226,34 +266,21 @@ public class ElementGenerator {
         method
                 .addStatement("this.visitor." + visitAttrFunctionName + "(" + attrName + getValueFunction + ")")
                 .addStatement("return this.self()");
-
         builder.addMethod(method.build());
 
-        //to avoid building the same function several times in ElementVisitor
+
+
+        //to avoid building the same function several times in ElementVisitor, it will only be created if not present in the Set.
+        // Several element can have the attrSomething() function in their definition
+        // In this case we avoid building this attrSomething() function several times in ElementVisitor
+        // the usage of the set is for the O(1) search
         if (!createdFunctions.contains(visitAttrFunctionName)) {
-            String lowerName = firstToLower(name);
-            String varName = invalidStrings.contains(name.toLowerCase()) ? "var1" : lowerName;
-            MethodSpec.Builder attrMethod = MethodSpec
-                    .methodBuilder(visitAttrFunctionName)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, varName);
-
-            String visitString;
-
-            if (type.contains("boolean")){
-                visitString = "visitAttributeBoolean";
-            } else {
-                visitString = "visitAttribute";
-            }
-            attrMethod.addStatement("this." + visitString + "(\"" + firstToLower(attrData.component1()) + "\", " + varName +")");
-
+            generateAttrFunction(pair, elementVisitorBuilder, name, visitAttrFunctionName, type);
             createdFunctions.add(visitAttrFunctionName);
-
-            elementVisitorBuilder.addMethod(attrMethod.build());
         }
     }
 
-    enum ElementType {
+    private enum ElementType {
         SIMPLE,
         COMPLEX
     }

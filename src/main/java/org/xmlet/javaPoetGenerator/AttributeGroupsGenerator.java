@@ -3,10 +3,11 @@ package org.xmlet.javaPoetGenerator;
 import com.squareup.javapoet.*;
 import org.xmlet.newParser.AttrGroup;
 import javax.lang.model.element.Modifier;
+
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
+import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateAttrFunction;
 import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
-import static org.xmlet.utils.Utils.firstToLower;
-import static org.xmlet.utils.Utils.firstToUpper;
+import static org.xmlet.utils.Utils.*;
 
 public class AttributeGroupsGenerator {
 
@@ -16,24 +17,22 @@ public class AttributeGroupsGenerator {
     ) {
         String className = attrGroup.getFinalClassName();
 
+        //builds the base interface
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder(className)
                 .addModifiers(Modifier.PUBLIC)
                 .addTypeVariable(ELEMENT_T_Z)
                 .addTypeVariable(zExtendsElement);
 
+        //adds the superInterfaces to the interface
         attrGroup.getRefsList().forEach(reference -> addOthersSuperInterface(builder, reference));
 
+        //adds the attribute function for each attribute to the interface
         attrGroup.getAttrValuesList().forEach(pair -> {
-            String[] strs = pair.component1().split("-");
-            StringBuilder sb = new StringBuilder();
+            String name = generateAttrName(pair);
+            String attrName = getAttrName(name);
+            String visitAttrFunctionName = getVisitAttrName(name);
 
-            for (int i = 0; i < strs.length; i++) {
-                sb.append(firstToUpper(strs[i]));
-            }
-
-            String name = sb.toString();
-            String attrName = "attr" + name;
 
             MethodSpec.Builder method = MethodSpec.methodBuilder(attrName)
                     .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
@@ -41,40 +40,15 @@ public class AttributeGroupsGenerator {
 
             String type = pair.component2();
 
-            String getValueFunction;
+            String getValueFunction = getValueFunctionAndAddParameter(type, method, attrName);
 
-            if (primitiveAndStringTypes.containsKey(type)) {
-                method.addParameter(primitiveAndStringTypes.get(type), attrName);
-                if (primitiveAndStringTypes.get(type) == String.class)
-                    getValueFunction = "";
-                else
-                    getValueFunction = ".toString()";
-            } else {
-                method.addParameter(ClassName.get(CLASS_PACKAGE, "Enum" + firstToUpper(type)), attrName);
-                getValueFunction = ".getValue()";
-            }
-            method.addStatement("this.getVisitor().visitAttribute" + name + "(" + attrName + getValueFunction + ")");
-            method.addStatement("return this.self()");
+            method
+                    .addStatement("this.getVisitor()." + visitAttrFunctionName + "(" + attrName + getValueFunction + ")")
+                    .addStatement("return this.self()");
+
             builder.addMethod(method.build());
 
-
-            String lowerName = firstToLower(name);
-            String varName = invalidStrings.contains(name.toLowerCase()) ? "var1" : lowerName;
-            MethodSpec.Builder attrMethod = MethodSpec
-                    .methodBuilder("visitAttribute" + name)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(String.class, varName);
-
-            String visitString;
-
-            if (type.contains("boolean")){
-                visitString = "visitAttributeBoolean";
-            } else {
-                visitString = "visitAttribute";
-            }
-            attrMethod.addStatement("this." + visitString + "(\"" + firstToLower(pair.component1()) + "\", " + varName +")");
-
-            elementVisitorBuilder.addMethod(attrMethod.build());
+            generateAttrFunction(pair, elementVisitorBuilder, name, visitAttrFunctionName, type);
         });
 
         return builder;

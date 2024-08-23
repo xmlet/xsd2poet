@@ -17,31 +17,17 @@ import static org.xmlet.javaPoetGenerator.InfrastructureGenerator.*;
 import static org.xmlet.utils.Utils.firstToUpper;
 
 public class ClassGenerator {
-    TypeSpec.Builder elementVisitor;
 
-    public void generateClasses(Parser parser) {
+    public static void generateClasses(Parser parser) {
+        createInfrastructureClasses();
 
-        createClass(createCustomAttributeGroup(), CLASS_PACKAGE);
-        createClass(createCustomElement(), CLASS_PACKAGE);
-        createClass(createBaseElement(), CLASS_PACKAGE);
-        elementVisitor = createElementVisitor();
-        createClass(createEnumInterface(), CLASS_PACKAGE);
-        createClass(createTextGroup(), CLASS_PACKAGE);
+        TypeSpec.Builder elementVisitor = createElementVisitor();
 
-
-        createClass(createAsyncElement(), ASYNC_PACKAGE);
-        createClass(createAwaitConsumer(),ASYNC_PACKAGE);
-        createClass(createOnCompletion(),ASYNC_PACKAGE);
-        createClass(createText(), CLASS_PACKAGE);
-
-        KClassGenerator.Companion.createKotlinInfrastructureClasses();
-
-
-        parser.getElementsList().forEach(this::elementGenerator);
-        parser.getChoiceList().forEach(this::choiceGenerator);
-        parser.getGroupList().forEach(this::groupGenerator);
-        parser.getSimpleTypeList().forEach(this::simpleTypeGenerator);
-        parser.getAttrGroupsList().forEach(this::attrGroupGenerator);
+        parser.getElementsList().forEach(element -> elementGenerator(element, elementVisitor));
+        parser.getChoiceList().forEach(ClassGenerator::choiceGenerator);
+        parser.getGroupList().forEach(ClassGenerator::groupGenerator);
+        parser.getSimpleTypeList().forEach(ClassGenerator::simpleTypeGenerator);
+        parser.getAttrGroupsList().forEach(attrgroup -> attrGroupGenerator(attrgroup, elementVisitor));
 
         Map<String, Group> groupMap = parser.getGroupList().stream()
                 .collect(Collectors.toMap(Group::getUpperCaseName, obj -> obj));
@@ -57,7 +43,20 @@ public class ClassGenerator {
 
     }
 
-    private void addAttrDependencies(Map<String, Group> groupMap, String dependency, ElementComplete elementComplete) {
+    private static void createInfrastructureClasses() {
+        createClass(createCustomAttributeGroup());
+        createClass(createCustomElement());
+        createClass(createBaseElement());
+        createClass(createEnumInterface());
+        createClass(createTextGroup());
+        createClass(createAsyncElement(), ASYNC_PACKAGE);
+        createClass(createAwaitConsumer(), ASYNC_PACKAGE);
+        createClass(createOnCompletion(), ASYNC_PACKAGE);
+        createClass(createText());
+        KClassGenerator.Companion.createKotlinInfrastructureClasses();
+    }
+
+    private static void addAttrDependencies(Map<String, Group> groupMap, String dependency, ElementComplete elementComplete) {
         Group group = groupMap.get(firstToUpper(dependency));
         if (group != null) {
             elementComplete.addAttrs(group.getBaseClassValuesList());
@@ -65,20 +64,22 @@ public class ClassGenerator {
         }
     }
 
-    private void simpleTypeGenerator(SimpleType simpleType) {
+    private static void simpleTypeGenerator(SimpleType simpleType) {
         createClass(generateSimpleTypeMethods(simpleType));
     }
 
 
-    private void elementGenerator(ElementXsd element) {
+    private static void elementGenerator(ElementXsd element, TypeSpec.Builder elementVisitor) {
         createClass(generateElementMethods(element, elementVisitor));
     }
 
-    private void choiceGenerator(Choice choice) {createClass(generateChoiceMethods(choice));}
+    private static void choiceGenerator(Choice choice) {createClass(generateChoiceMethods(choice));}
 
-    private void groupGenerator(Group group) {createClass(generateChoiceMethods(group));}
+    private static void groupGenerator(Group group) {createClass(generateChoiceMethods(group));}
 
-    private void attrGroupGenerator(AttrGroup attrGroup) { createClass(generateAttributeGroupsMethods(attrGroup, elementVisitor));}
+    private static void attrGroupGenerator(AttrGroup attrGroup, TypeSpec.Builder elementVisitor) {
+        createClass(generateAttributeGroupsMethods(attrGroup, elementVisitor));
+    }
 
     public static void addElementSuperInterface(TypeSpec.Builder interfaceBuilder, String superInterfaceName, String className) {
         interfaceBuilder
@@ -105,7 +106,7 @@ public class ClassGenerator {
         }
     }
 
-    public void createClass(TypeSpec.Builder builder, String path) {
+    public static void createClass(TypeSpec.Builder builder, String path) {
         if (builder != null) {
             try {
                 JavaFile.builder(path, builder.build()).build().writeTo(new File(JAVA_ROOT_PATH));

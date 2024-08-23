@@ -5,8 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.lang.model.element.Modifier;
 import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 
+// this class has the objective to build the Insfrastructure of HtmlFlow library
 public class InfrastructureGenerator {
 
+    //creates the Element Class
     public static TypeSpec.Builder createBaseElement() {
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder("Element")
@@ -152,6 +154,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the CustomElement Class
     public static TypeSpec.Builder createCustomElement() {
         TypeSpec.Builder builder = TypeSpec
                 .classBuilder("CustomElement")
@@ -246,6 +249,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the ElementVisitor Class
     public static TypeSpec.Builder createElementVisitor() {
 
         TypeSpec.Builder builder = TypeSpec
@@ -353,6 +357,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the TextGroup Class
     public static TypeSpec.Builder createTextGroup() {
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder("TextGroup")
@@ -389,6 +394,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the EnumInterface Class
     public static TypeSpec.Builder createEnumInterface() {
         return TypeSpec
                 .interfaceBuilder("EnumInterface")
@@ -402,6 +408,7 @@ public class InfrastructureGenerator {
                 );
     }
 
+    //creates the CustomAttribute Class
     public static TypeSpec.Builder createCustomAttributeGroup() {
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder("CustomAttributeGroup")
@@ -425,6 +432,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the AsyncElement Class
     public static TypeSpec.Builder createAsyncElement() {
         TypeVariableName eExtendsElement = TypeVariableName.get("E", elementClassName);
 
@@ -449,6 +457,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the AwaitConsumer Class
     public static TypeSpec.Builder createAwaitConsumer() {
 
         TypeSpec.Builder builder = TypeSpec
@@ -470,6 +479,7 @@ public class InfrastructureGenerator {
         return builder;
     }
 
+    //creates the OnCompletition Class
     public static TypeSpec.Builder createOnCompletion() {
 
         return TypeSpec
@@ -484,6 +494,7 @@ public class InfrastructureGenerator {
                 );
     }
 
+    //creates the Text Class
     public static TypeSpec.Builder createText() {
         TypeVariableName z =
                 TypeVariableName.get(
