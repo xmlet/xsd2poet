@@ -2,8 +2,7 @@ package org.xmlet.kotlinPoetGenerator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.xmlet.javaPoetGenerator.ClassGenerator.ELEMENT_PACKAGE
-import org.xmlet.javaPoetGenerator.ClassGenerator.KOTLIN_ROOT_PATH
+import org.xmlet.javaPoetGenerator.GeneratorConstants.*
 import java.io.File
 
 class KClassGenerator {
