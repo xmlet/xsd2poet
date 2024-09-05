@@ -1,11 +1,14 @@
 package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
+import com.squareup.kotlinpoet.FileSpec;
 import kotlin.Pair;
+import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.newParser.ElementComplete;
 import org.xmlet.newParser.ElementXsd;
 import javax.lang.model.element.Modifier;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.xmlet.javaPoetGenerator.ClassGenerator.*;
 import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateAttrFunction;
@@ -20,10 +23,15 @@ import static org.xmlet.utils.Utils.getVisitAttrName;
  * */
 public class ElementGenerator {
 
+    private static final Set<String> classesWithNoExtensions = Set.of("Text", "Html");
+
     //Set used to avoid creating duplicated function in elementVisitor
     private static HashSet<String> createdFunctions = new HashSet<>();
 
-    static public TypeSpec.Builder generateElementMethods(ElementXsd element, TypeSpec.Builder elementVisitorBuilder) {
+    static public TypeSpec.Builder generateElementMethods(
+            ElementXsd element,
+            TypeSpec.Builder elementVisitorBuilder,
+            FileSpec.Builder extensionsFile) {
 
         String lowerCaseName = element.getLowerCaseName();
         String className = element.getFinalClassName();
@@ -39,6 +47,10 @@ public class ElementGenerator {
 
         //generates the sequence logic, if the element had a sequence in the xsd file
         handleSequence(element, builder, elementVisitorBuilder);
+
+        if (!classesWithNoExtensions.contains(className)) {
+            ExtensionsGenerator.Companion.addExtensions(extensionsFile, element);
+        }
 
         return builder;
     }

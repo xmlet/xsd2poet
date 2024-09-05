@@ -4,21 +4,6 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=com.github.xmlet%3AxsdAsmFaster&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=com.github.xmlet%3AxsdAsmFaster)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=com.github.xmlet%3AxsdAsmFaster&metric=bugs)](https://sonarcloud.io/dashboard?id=com.github.xmlet%3AxsdAsmFaster)
 
-### Done:
-- "All" and "Choice" classes generations is done
-- "HTML elements" classes generation is done (please check missing tag)
-- "Enums" classes generation is done (please check missing tag)
-- "Custom Attribute Groups" are being generator (please check missing tag)
-- sizesType corner case is done
-- CustomAttributeGroup issue solved
-- ElementVisitor methods generation -> done
-- Details corner case done
-- Some element, fixed in ElementVisitor code genration
-### Missing:
-- Missing Text and ElementExtensions classes to be created on Execution time to avoid any reset systems
-- Code refactoring there is some code repetition
-
-
 # XsdAsmFaster
 
 <div align="justify"> 

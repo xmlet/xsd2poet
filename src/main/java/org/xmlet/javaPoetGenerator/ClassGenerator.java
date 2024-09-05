@@ -1,6 +1,8 @@
 package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
+import com.squareup.kotlinpoet.FileSpec;
+import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.kotlinPoetGenerator.KClassGenerator;
 import org.xmlet.newParser.*;
 import java.io.File;
@@ -23,7 +25,16 @@ public class ClassGenerator {
 
         TypeSpec.Builder elementVisitor = createElementVisitor();
 
-        parser.getElementsList().forEach(element -> elementGenerator(element, elementVisitor));
+        ExtensionsGenerator.Companion.createXsd2PoetExtensions(
+                extensionsFile -> {
+                    parser.getElementsList().forEach(
+                            element ->
+                                    elementGenerator(element, elementVisitor, extensionsFile)
+                    );
+                    return true;
+                }
+        );
+
         parser.getChoiceList().forEach(ClassGenerator::choiceGenerator);
         parser.getGroupList().forEach(ClassGenerator::groupGenerator);
         parser.getSimpleTypeList().forEach(ClassGenerator::simpleTypeGenerator);
@@ -40,7 +51,6 @@ public class ClassGenerator {
         });
 
         createClass(elementVisitor, ELEMENT_PACKAGE);
-
     }
 
     private static void createInfrastructureClasses() {
@@ -69,8 +79,11 @@ public class ClassGenerator {
     }
 
 
-    private static void elementGenerator(ElementXsd element, TypeSpec.Builder elementVisitor) {
-        createClass(generateElementMethods(element, elementVisitor));
+    private static void elementGenerator(
+            ElementXsd element,
+            TypeSpec.Builder elementVisitor,
+            FileSpec.Builder extensionsFile) {
+        createClass(generateElementMethods(element, elementVisitor, extensionsFile));
     }
 
     private static void choiceGenerator(Choice choice) {createClass(generateChoiceMethods(choice));}

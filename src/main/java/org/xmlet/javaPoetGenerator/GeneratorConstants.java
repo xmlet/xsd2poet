@@ -39,6 +39,8 @@ public class GeneratorConstants {
 
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
 
+    public static final String EXTENSIONS_PACKAGE = "org.xmlet.extensionsGenerator";
+
     public static final String ENUM_INTERFACE_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
 
     public static final String ELEMENT_PACKAGE = "org.xmlet.htmlapifaster";

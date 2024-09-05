@@ -1,5 +1,6 @@
 package org.xmlet;
 
+import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.javaPoetGenerator.ClassGenerator;
 import org.xmlet.newParser.Parser;
 
