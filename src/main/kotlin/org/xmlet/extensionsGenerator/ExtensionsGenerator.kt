@@ -76,13 +76,14 @@ class ExtensionsGenerator {
             val className = element.getFinalClassName()
             file.addFunction(
                 FunSpec.builder(element.getLowerCaseName())
+                    .addModifiers(KModifier.INLINE)
                     .returns(t)
                     .receiver(t)
                     .addTypeVariables(listOfTypeVariables)
                     .addParameter("block", LambdaTypeName.get(
                         receiver = ClassName(ELEMENT_PACKAGE, className).parameterizedBy(t),
                         returnType = kotlinUnit,
-                    ))
+                    ), KModifier.CROSSINLINE)
                     .addStatement("val elem =  $className(this)")
                     .addStatement("elem.block()")
                     .addStatement("return elem.`__`()")
