@@ -33,13 +33,11 @@ public class GeneratorConstants {
 
     public static final Set<String> specialTypes = Set.of("sizesType");
 
-    public static final String JAVA_ROOT_PATH = "./src/main/java";
+    public static final String JAVA_ROOT_PATH = "./target/generated-sources";
 
-    public static final String KOTLIN_ROOT_PATH = "./src/main/kotlin";
+    public static final String KOTLIN_ROOT_PATH = "./target/generated-sources";
 
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
-
-    public static final String EXTENSIONS_PACKAGE = "org.xmlet.extensionsGenerator";
 
     public static final String ENUM_INTERFACE_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
 
