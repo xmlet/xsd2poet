@@ -15,7 +15,6 @@ import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateAttrFunction;
 import static org.xmlet.javaPoetGenerator.GeneralGenerator.generateSequenceMethod;
 import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
 import static org.xmlet.utils.Utils.*;
-import static org.xmlet.utils.Utils.getVisitAttrName;
 
 
 /**
@@ -26,7 +25,7 @@ public class ElementGenerator {
     private static final Set<String> classesWithNoExtensions = Set.of("Text", "Html");
 
     //Set used to avoid creating duplicated function in elementVisitor
-    private static HashSet<String> createdFunctions = new HashSet<>();
+    private static final HashSet<String> createdFunctions = new HashSet<>();
 
     static public TypeSpec.Builder generateElementMethods(
             ElementXsd element,

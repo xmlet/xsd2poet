@@ -33,7 +33,7 @@ class ExtensionsGenerator {
                 )
         )
 
-        private val listOfTypeVariables = listOf(tExtendsElementTZ, zExtendsElementAnyAny);
+        private val listOfTypeVariables = listOf(tExtendsElementTZ, zExtendsElementAnyAny)
 
         fun createXsd2PoetExtensions(block: (file:  FileSpec.Builder) -> Boolean) {
             val file = FileSpec.builder(CLASS_PACKAGE, "Xsd2PoetExtensions")

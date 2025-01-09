@@ -106,6 +106,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -121,6 +122,54 @@
                             <sources>
                                 <source>target/generated-sources</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Delete conflicting sources from src/main/java -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>clean-conflicting-sources</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Delete conflicting files from src/main/java -->
+                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/Element.java"/>
+                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- If we clean the project and delete the generated-sources then we should restore the former deleted filesn-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>reset-specific-file</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>git</executable>
+                            <arguments>
+                                <argument>restore</argument>
+                                <argument>--</argument>
+                                <argument>src/main/java/org/xmlet/htmlapifaster/Element.java</argument>
+                                <argument>src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

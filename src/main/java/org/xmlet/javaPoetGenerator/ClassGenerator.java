@@ -3,7 +3,6 @@ package org.xmlet.javaPoetGenerator;
 import com.squareup.javapoet.*;
 import com.squareup.kotlinpoet.FileSpec;
 import org.xmlet.extensionsGenerator.ExtensionsGenerator;
-import org.xmlet.kotlinPoetGenerator.KClassGenerator;
 import org.xmlet.newParser.*;
 import java.io.File;
 import java.io.IOException;
@@ -54,16 +53,8 @@ public class ClassGenerator {
     }
 
     private static void createInfrastructureClasses() {
-        createClass(createCustomAttributeGroup());
         createClass(createCustomElement());
         createClass(createBaseElement());
-        createClass(createEnumInterface());
-        createClass(createTextGroup());
-        createClass(createAsyncElement(), ASYNC_PACKAGE);
-        createClass(createAwaitConsumer(), ASYNC_PACKAGE);
-        createClass(createOnCompletion(), ASYNC_PACKAGE);
-        createClass(createText());
-        KClassGenerator.Companion.createKotlinInfrastructureClasses();
     }
 
     private static void addAttrDependencies(Map<String, Group> groupMap, String dependency, ElementComplete elementComplete) {

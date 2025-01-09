@@ -1,8 +1,6 @@
 package org.xmlet.newParser
 
 import org.w3c.dom.Node
-import org.xmlet.utils.Utils.firstToUpper
-import java.util.*
 
 /**
  * Each of this elements will represent an Interface in the final library
