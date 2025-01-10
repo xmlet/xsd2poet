@@ -3,7 +3,7 @@
 
     <groupId>com.github.xmlet</groupId>
     <artifactId>xsd2poet</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
@@ -298,7 +298,7 @@
         <connection>scm:git:git@github.com:xmlet/xsd2poet.git</connection>
         <developerConnection>scm:git:git@github.com:xmlet/xsd2poet.git</developerConnection>
         <url>git@github.com:xmlet/xsd2poet.git</url>
-        <tag>xsd2poet-1.0.5</tag>
+        <tag>xsd2poet-1.0.4</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
