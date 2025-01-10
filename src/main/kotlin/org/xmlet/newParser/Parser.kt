@@ -4,8 +4,7 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xmlet.utils.Utils.firstToUpper
 import java.io.File
-import java.util.HashSet
-import java.util.LinkedList
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 

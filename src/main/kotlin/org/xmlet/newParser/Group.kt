@@ -1,8 +1,6 @@
 package org.xmlet.newParser
 
 import org.w3c.dom.Node
-import org.xmlet.utils.Utils.firstToUpper
-import java.util.*
 
 /**
  * This class will represent a interface which will be implemented by others with

@@ -2,7 +2,7 @@ package org.xmlet.xsdasmfaster.classes.infrastructure;
 
 /**
  * This exception is thrown whenever a Restriction is violated in any of the method defined in the {@link RestrictionValidator}
- * class. The {@link RestrictionViolationException#detailMessage} contains information to identify the violated restriction.
+ * class.
  */
 public class RestrictionViolationException extends RuntimeException {
 

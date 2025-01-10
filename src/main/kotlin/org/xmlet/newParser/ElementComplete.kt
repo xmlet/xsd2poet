@@ -1,9 +1,6 @@
 package org.xmlet.newParser
 
 import org.w3c.dom.Node
-import java.lang.UnsupportedOperationException
-import java.util.*
-import kotlin.collections.HashSet
 
 /**
  * An ElementComplete will result in a class with the name "<Element><classSuffix>"

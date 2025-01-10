@@ -33,23 +33,9 @@ class ExtensionsGenerator {
                 )
         )
 
-        private val listOfTypeVariables = listOf(tExtendsElementTZ, zExtendsElementAnyAny);
+        private val listOfTypeVariables = listOf(tExtendsElementTZ, zExtendsElementAnyAny)
 
-        fun createXsd2PoetExtensions(block: (file:  FileSpec.Builder) -> Boolean) {
-            val file = FileSpec.builder(EXTENSIONS_PACKAGE, "Xsd2PoetExtensions")
-            //file.addImport(Element::class,"")
-
-            block(file)
-
-            file.build().writeTo(File(KOTLIN_ROOT_PATH))
-        }
-
-        fun addExtensions(file: FileSpec.Builder, element: ElementXsd) {
-            addProperty(file, element)
-            addFun(file, element)
-        }
-
-        private fun addProperty(
+        fun addProperty(
             file: FileSpec.Builder,
             element: ElementXsd
         ){
@@ -69,21 +55,36 @@ class ExtensionsGenerator {
             )
         }
 
-        private fun addFun(
+        /**
+         * For example, given a FlowContent instance e.g. fc, we can do:
+         *    val sameFc = fc.h3 { it: H3 -> ... } // returns the same FlowContent instance
+         * The extension function h3 should be like:
+         *    inline fun <T : Element<T, Z>, Z : Element<*, *>> FlowContent<T, Z>.h3(crossinline
+         *     block: H3<FlowContent<T, Z>>.() -> Unit): FlowContent<T, Z> {
+         * Type parameters T and Z will capture the implementing class of FlowContent (i.e. T) and its parent (i.e. Z).
+         */
+        fun addFun(
             file: FileSpec.Builder,
-            element: ElementXsd,
+            receiverName: String, // e.g. "FlowContent"
+            functionName: String, // e.g. "h3" inside given FlowContent
         ) {
-            val className = element.getFinalClassName()
+            val receiverClass = ClassName(ELEMENT_PACKAGE, receiverName).parameterizedBy(t, z) // i.e. FlowContent<T, Z>
+            val childName = functionName.replaceFirstChar { it.uppercase() } // i.e. H3 inside FlowContent
+            val childClass = ClassName(ELEMENT_PACKAGE, childName).parameterizedBy( // i.e. H3<FlowContent<T, Z>>
+                receiverClass
+            )
+
             file.addFunction(
-                FunSpec.builder(element.getLowerCaseName())
-                    .returns(t)
-                    .receiver(t)
-                    .addTypeVariables(listOfTypeVariables)
+                FunSpec.builder(functionName) // i.e. h3()
+                    .addModifiers(KModifier.INLINE)
+                    .returns(receiverClass) // i.e. FlowContent<T, Z>
+                    .receiver(receiverClass) // i.e. FlowContent<T, Z>
+                    .addTypeVariables(listOfTypeVariables) // i.e. <T : Element<T, Z>, Z : Element<*, *>>
                     .addParameter("block", LambdaTypeName.get(
-                        receiver = ClassName(ELEMENT_PACKAGE, className).parameterizedBy(t),
+                        receiver = childClass, // i.e. H3<FlowContent<T, Z>>
                         returnType = kotlinUnit,
-                    ))
-                    .addStatement("val elem =  $className(this)")
+                    ), KModifier.CROSSINLINE)
+                    .addStatement("val elem =  $childName(this)")
                     .addStatement("elem.block()")
                     .addStatement("return elem.`__`()")
                     .build()

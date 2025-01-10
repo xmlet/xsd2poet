@@ -1,6 +1,8 @@
 package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
+import com.squareup.kotlinpoet.FileSpec;
+import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.newParser.BaseChoiceGroup;
 import javax.lang.model.element.Modifier;
 import java.util.List;
@@ -12,25 +14,26 @@ import static org.xmlet.utils.Utils.firstToUpper;
  * This class generates Choice Interfaces for the generated library
  * */
 public class ChoiceGenerator {
-    static public TypeSpec.Builder generateChoiceMethods(BaseChoiceGroup baseChoiceGroup) {
+    static public TypeSpec.Builder generateChoiceMethods(BaseChoiceGroup baseChoiceGroup, FileSpec.Builder xsd2PoetExtensions) {
         return generateChoiceMethods(
                 baseChoiceGroup.getFinalClassName(),
                 baseChoiceGroup.getRefsList(),
-                baseChoiceGroup.getBaseClassValuesList()
+                baseChoiceGroup.getBaseClassValuesList(),
+                xsd2PoetExtensions
         );
     }
 
     /**
-     *
-     * @param className the class name of the interface being generated
-     * @param refList list of the super classes this interface will extend
-     * @param choiceList list of all the methods that have to be added to the interface
-     * */
+     * @param className          the class name of the interface being generated
+     * @param refList            list of the super classes this interface will extend
+     * @param choiceList         list of all the methods that have to be added to the interface
+     * @param xsd2PoetExtensions
+     */
     static public TypeSpec.Builder generateChoiceMethods(
             String className,
             List<String> refList,
-            List<String> choiceList
-    ) {
+            List<String> choiceList,
+            FileSpec.Builder xsd2PoetExtensions) {
 
         TypeSpec.Builder builder = TypeSpec
                 .interfaceBuilder(className)
@@ -40,9 +43,10 @@ public class ChoiceGenerator {
 
         refList.forEach(reference -> addOthersSuperInterface(builder, reference));
 
-
         choiceList.forEach(choiceLowerCaseName -> {
             String choiceUpperCaseName = firstToUpper(choiceLowerCaseName);
+            
+            ExtensionsGenerator.Companion.addFun(xsd2PoetExtensions, className, choiceLowerCaseName);
             builder.addMethod(
                     MethodSpec
                             .methodBuilder(choiceLowerCaseName)

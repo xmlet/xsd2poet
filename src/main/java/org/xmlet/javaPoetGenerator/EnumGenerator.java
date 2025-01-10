@@ -9,14 +9,14 @@ import static org.xmlet.javaPoetGenerator.GeneratorConstants.restrictionValidato
 
 /**
  * This class is in charge of creating all the Enum classes in the final library based on each SimpleType received from the parser
- *
+ * <p>
  * If the SimpleType has a restrictionList then we create a class to enforce the restriction, there is no need for the Enum
  * */
 public class EnumGenerator {
 
     /**
      * There are two types of Classes being generated
-     *
+     * <p>
      * Either a enum if there are no restrictions
      * or a class to enforce the restriction
      *
@@ -31,7 +31,7 @@ public class EnumGenerator {
 
     /**
      * Method to generate the Enum Class
-     *
+     * <p>
      * Creates a constructor tha receives a value (always a String)
      * Creates a field and it's getter
      * Adds the super interface, it's always the EnumInterface
@@ -68,7 +68,7 @@ public class EnumGenerator {
 
     /**
      * Method to generate the Restriction Class
-     *
+     * <p>
      * Creates a class
      * adds an empty constructor
      * adds a method to validate the restriction
