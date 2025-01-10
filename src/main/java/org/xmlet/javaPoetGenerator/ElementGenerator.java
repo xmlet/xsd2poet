@@ -48,7 +48,7 @@ public class ElementGenerator {
         handleSequence(element, builder, elementVisitorBuilder);
 
         if (!classesWithNoExtensions.contains(className)) {
-            ExtensionsGenerator.Companion.addExtensions(extensionsFile, element);
+            ExtensionsGenerator.Companion.addProperty(extensionsFile, element);
         }
 
         return builder;
