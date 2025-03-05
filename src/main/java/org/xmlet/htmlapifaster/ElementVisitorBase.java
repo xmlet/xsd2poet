@@ -37,6 +37,9 @@ public abstract class ElementVisitorBase {
      */
     public abstract <E extends Element, U> void visitDynamic(E element, BiConsumer<E, U> consumer);
 
+    public abstract <E extends Element, U> void visitMfe(E element, BiConsumer<E, U> consumer);
+
+
     public abstract <M, E extends Element> void visitAwait(E element, AwaitConsumer<E, M> asyncAction);
 
     public abstract <M, E extends Element> void visitSuspending(E element, SuspendConsumer<E, M> suspendAction);
