@@ -67,6 +67,8 @@ public class GeneratorConstants {
 
     public static final ClassName elementExtensionsClassName = ClassName.get(CLASS_PACKAGE, "ElementExtensions");
 
+    public static final ClassName mfeConfiguration = ClassName.get(CLASS_PACKAGE, "MfeConfiguration");
+
     public static final ClassName biConsumerClassName = ClassName.get(BiConsumer.class);
 
     public static final ClassName consumerClassName = ClassName.get(Consumer.class);

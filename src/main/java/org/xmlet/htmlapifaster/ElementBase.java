@@ -64,9 +64,9 @@ public interface ElementBase<T extends Element, Z extends Element> extends Async
         return self;
     }
 
-    default <U> T mfe(BiConsumer<T, U> consumer) {
+    default T mfe(MfeConfiguration data) {
         T self = this.self();
-        this.getVisitor().visitMfe(self, consumer);
+        this.getVisitor().visitMfe(self, data);
         return self;
     }
 
