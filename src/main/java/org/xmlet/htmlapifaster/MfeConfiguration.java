@@ -2,17 +2,17 @@ package org.xmlet.htmlapifaster;
 
 
 public interface MfeConfiguration {
-    String getMFE_URL_RESOURCE();
+    String getMfeUrlResource();
 
-    String getMFE_ELEMENT_NAME();
+    String getMfeElementName();
 
-    String getMFE_LISTENING_EVENT_NAME();
+    String getMfeName();
 
-    String getMFE_TRIGGERS_EVENT_NAME();
+    String getMfeListeningEventName();
 
-    String getMFE_SCRIPT_NAME();
+    String getMfeTriggerEventName();
 
-    String getMFE_CSS_NAME();
+    String getMfeScriptUrl();
 
-    boolean isMFE_MULTIPLE_BUTTONS();
+    String getMfeStylingUrl();
 }
