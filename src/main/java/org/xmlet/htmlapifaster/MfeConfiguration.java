@@ -15,4 +15,6 @@ public interface MfeConfiguration {
     String getMfeScriptUrl();
 
     String getMfeStylingUrl();
+
+    boolean isMfeStreamingData();
 }
