@@ -18,19 +18,19 @@ public interface MfeConfiguration {
 
     boolean isMfeStreamingData();
 
-    boolean setMfeStreamingData(boolean streamingData);
+    MfeConfiguration setMfeStreamingData(boolean streamingData);
 
-    String setMfeUrlResource(String mfeUrlResource);
+    MfeConfiguration setMfeUrlResource(String mfeUrlResource);
 
-    String setMfeName(String mfeName);
+    MfeConfiguration setMfeName(String mfeName);
 
-    String setMfeListeningEventName(String mfeListeningEventName);
+    MfeConfiguration setMfeListeningEventName(String mfeListeningEventName);
 
-    String setMfeTriggersEventName(String mfeTriggersEventName);
+    MfeConfiguration setMfeTriggersEventName(String mfeTriggersEventName);
 
-    String setMfeElementName(String mfeElementName);
+    MfeConfiguration setMfeElementName(String mfeElementName);
 
-    String setMfeScriptUrl(String mfeScriptUrl);
+    MfeConfiguration setMfeScriptUrl(String mfeScriptUrl);
 
-    String setMfeStylingUrl(String mfeStylingUrl);
+    MfeConfiguration setMfeStylingUrl(String mfeStylingUrl);
 }
