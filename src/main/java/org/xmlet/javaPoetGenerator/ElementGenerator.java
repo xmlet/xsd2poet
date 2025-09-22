@@ -29,8 +29,7 @@ public class ElementGenerator {
 
     static public TypeSpec.Builder generateElementMethods(
             ElementXsd element,
-            TypeSpec.Builder elementVisitorBuilder,
-            FileSpec.Builder extensionsFile) {
+            TypeSpec.Builder elementVisitorBuilder) {
 
         String lowerCaseName = element.getLowerCaseName();
         String className = element.getFinalClassName();
@@ -47,11 +46,18 @@ public class ElementGenerator {
         //generates the sequence logic, if the element had a sequence in the xsd file
         handleSequence(element, builder, elementVisitorBuilder);
 
+        return builder;
+    }
+
+    static public void generateElementMethodsForKotlin(
+            ElementXsd element,
+            FileSpec.Builder extensionsFile) {
+
+        String className = element.getFinalClassName();
+
         if (!classesWithNoExtensions.contains(className)) {
             ExtensionsGenerator.Companion.addProperty(extensionsFile, element);
         }
-
-        return builder;
     }
 
     /**
