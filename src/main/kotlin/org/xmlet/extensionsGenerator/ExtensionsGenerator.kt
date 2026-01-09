@@ -4,7 +4,6 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.xmlet.javaPoetGenerator.GeneratorConstants.*
 import org.xmlet.newParser.ElementXsd
-import java.io.File
 
 class ExtensionsGenerator {
 
