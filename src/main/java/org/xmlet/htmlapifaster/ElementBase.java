@@ -7,7 +7,7 @@ import org.xmlet.htmlapifaster.async.AwaitConsumer;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public interface ElementBase<T extends Element, Z extends Element> extends AsyncElement<T>, ElementExtensions<Element<T, Z>> {
+public interface ElementBase<T extends Element, Z extends Element> extends AsyncElement<T> {
     T self();
 
     ElementVisitor getVisitor();
@@ -18,16 +18,9 @@ public interface ElementBase<T extends Element, Z extends Element> extends Async
 
     Z getParent();
 
-    @Override
     default  T addTextFromkotlin(@NotNull String txt) {
         this.getVisitor().visitRaw(new Text(this.self(), this.getVisitor(), txt));
         return this.self();
-    }
-
-    @NotNull
-    @Override
-    default Element<T, Z> unaryPlus(@NotNull String $this$unaryPlus) {
-        return addTextFromkotlin($this$unaryPlus);
     }
 
     /**

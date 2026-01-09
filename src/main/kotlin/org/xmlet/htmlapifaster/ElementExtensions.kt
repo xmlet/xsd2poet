@@ -1,9 +1,7 @@
 package org.xmlet.htmlapifaster
 
-interface ElementExtensions<T: Element<*,*>> {
+interface ElementExtensions<T: Element<*,*>, Z: Element<*,*>> : Element<T, Z> {
     operator fun String.unaryPlus(): T {
         return addTextFromkotlin(this)
     }
-
-    fun addTextFromkotlin(txt: String) : T
 }
