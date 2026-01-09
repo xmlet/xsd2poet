@@ -653,6 +653,7 @@
             <xsd:attribute name="multiple" type="xsd:boolean"/>
             <xsd:attribute name="name" type="xsd:string"/>
             <xsd:attribute name="size" type="xsd:long"/>
+            <xsd:attribute name="required" type="xsd:boolean"/>
         </xsd:complexType>
     </xsd:element>
 
