@@ -4,7 +4,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.kotlinpoet.FileSpec;
 import org.xmlet.newParser.AttrGroup;
 import org.xmlet.newParser.Choice;
 import org.xmlet.newParser.ElementComplete;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 
 import static org.xmlet.javaPoetGenerator.AttributeGroupsGenerator.generateAttributeGroupsMethods;
 import static org.xmlet.javaPoetGenerator.ChoiceGenerator.generateChoiceMethods;
-import static org.xmlet.javaPoetGenerator.ChoiceGenerator.generateChoiceMethodsForKotlin;
 import static org.xmlet.javaPoetGenerator.ElementGenerator.*;
 import static org.xmlet.javaPoetGenerator.EnumGenerator.generateSimpleTypeMethods;
 import static org.xmlet.javaPoetGenerator.GeneratorConstants.*;
@@ -58,21 +56,6 @@ public class ClassGenerator {
         createClass(elementVisitor, ELEMENT_PACKAGE);
     }
 
-    public static void generateExtensionsForKotlin(Parser parser) throws IOException {
-
-        FileSpec.Builder xsd2PoetExtensions = FileSpec.builder(CLASS_PACKAGE, "Xsd2PoetExtensions");
-
-        parser.getElementsList().forEach(
-                element ->
-                        elementGeneratorForKotlin(element, xsd2PoetExtensions)
-        );
-
-        parser.getChoiceList().forEach(choice -> choiceGeneratorForKotlin(choice, xsd2PoetExtensions));
-        parser.getGroupList().forEach(group -> groupGeneratorForKotlin(group, xsd2PoetExtensions));
-        xsd2PoetExtensions.build().writeTo(new File(KOTLIN_ROOT_PATH));
-
-    }
-
     private static void createInfrastructureClasses() {
         createClass(createCustomElement());
         createClass(createBaseElement());
@@ -97,26 +80,12 @@ public class ClassGenerator {
         createClass(generateElementMethods(element, elementVisitor));
     }
 
-    private static void elementGeneratorForKotlin(
-            ElementXsd element,
-            FileSpec.Builder extensionsFile) {
-        generateElementMethodsForKotlin(element, extensionsFile);
-    }
-
     private static void choiceGenerator(Choice choice) {
         createClass(generateChoiceMethods(choice));
     }
 
     private static void groupGenerator(Group group) {
         createClass(generateChoiceMethods(group));
-    }
-
-    private static void choiceGeneratorForKotlin(Choice choice, FileSpec.Builder xsd2PoetExtensions) {
-        generateChoiceMethodsForKotlin(choice, xsd2PoetExtensions);
-    }
-
-    private static void groupGeneratorForKotlin(Group group, FileSpec.Builder xsd2PoetExtensions) {
-        generateChoiceMethodsForKotlin(group, xsd2PoetExtensions);
     }
 
     private static void attrGroupGenerator(AttrGroup attrGroup, TypeSpec.Builder elementVisitor) {

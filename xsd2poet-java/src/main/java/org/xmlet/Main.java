@@ -11,6 +11,5 @@ public class Main {
         Parser parser = new Parser();
         parser.parse("src/main/resources/html_5_2.xsd");
         ClassGenerator.generateClasses(parser);
-        ClassGenerator.generateExtensionsForKotlin(parser);
     }
 }

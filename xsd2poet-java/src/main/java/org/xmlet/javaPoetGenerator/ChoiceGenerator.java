@@ -4,8 +4,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.kotlinpoet.FileSpec;
-import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.newParser.BaseChoiceGroup;
 
 import javax.lang.model.element.Modifier;
@@ -24,14 +22,6 @@ public class ChoiceGenerator {
                 baseChoiceGroup.getFinalClassName(),
                 baseChoiceGroup.getRefsList(),
                 baseChoiceGroup.getBaseClassValuesList()
-        );
-    }
-
-    static public void generateChoiceMethodsForKotlin(BaseChoiceGroup baseChoiceGroup, FileSpec.Builder xsd2PoetExtensions) {
-        generateChoiceMethodsForKotlin(
-                baseChoiceGroup.getFinalClassName(),
-                baseChoiceGroup.getBaseClassValuesList(),
-                xsd2PoetExtensions
         );
     }
 
@@ -67,19 +57,5 @@ public class ChoiceGenerator {
         });
 
         return builder;
-    }
-
-    /**
-     * @param className          the class name of the interface being generated
-     * @param choiceList         list of all the methods that have to be added to the interface
-     * @param xsd2PoetExtensions
-     */
-    static public void generateChoiceMethodsForKotlin(
-            String className,
-            List<String> choiceList,
-            FileSpec.Builder xsd2PoetExtensions) {
-        choiceList.forEach(choiceLowerCaseName -> {
-            ExtensionsGenerator.Companion.addFun(xsd2PoetExtensions, className, choiceLowerCaseName);
-        });
     }
 }

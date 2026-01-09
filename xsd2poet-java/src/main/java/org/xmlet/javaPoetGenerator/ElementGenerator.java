@@ -1,9 +1,7 @@
 package org.xmlet.javaPoetGenerator;
 
 import com.squareup.javapoet.*;
-import com.squareup.kotlinpoet.FileSpec;
 import kotlin.Pair;
-import org.xmlet.extensionsGenerator.ExtensionsGenerator;
 import org.xmlet.newParser.ElementComplete;
 import org.xmlet.newParser.ElementXsd;
 import javax.lang.model.element.Modifier;
@@ -47,17 +45,6 @@ public class ElementGenerator {
         handleSequence(element, builder, elementVisitorBuilder);
 
         return builder;
-    }
-
-    static public void generateElementMethodsForKotlin(
-            ElementXsd element,
-            FileSpec.Builder extensionsFile) {
-
-        String className = element.getFinalClassName();
-
-        if (!classesWithNoExtensions.contains(className)) {
-            ExtensionsGenerator.Companion.addProperty(extensionsFile, element);
-        }
     }
 
     /**
