@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>com.github.xmlet</groupId>
-    <artifactId>xsd2poet</artifactId>
+    <artifactId>xsd2poet-kotlin</artifactId>
     <version>1.0.8-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,7 +21,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>org.xmlet.Main</mainClass>
+                    <mainClass>org.xmlet.MainKt</mainClass>
                     <includeProjectDependencies>true</includeProjectDependencies>
                     <classpathScope>compile</classpathScope>
                 </configuration>
@@ -49,7 +49,6 @@
                         </goals>
                         <configuration>
                             <sourceDirs>
-                                <source>src/main/java</source>
                                 <source>src/main/kotlin</source>
                             </sourceDirs>
                         </configuration>
@@ -115,54 +114,6 @@
                 </executions>
             </plugin>
 
-            <!-- Delete conflicting sources from src/main/java -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>clean-conflicting-sources</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <!-- Delete conflicting files from src/main/java -->
-                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/Element.java" />
-                                <delete file="${project.basedir}/src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java" />
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- If we clean the project and delete the generated-sources then we should restore the former deleted filesn-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>reset-specific-file</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>git</executable>
-                            <arguments>
-                                <argument>restore</argument>
-                                <argument>--</argument>
-                                <argument>src/main/java/org/xmlet/htmlapifaster/Element.java</argument>
-                                <argument>src/main/java/org/xmlet/htmlapifaster/ElementVisitor.java</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
@@ -177,7 +128,6 @@
                         </goals>
                         <configuration>
                             <sourceDirectories>
-                                <source>src/main/java/org/xmlet/htmlapifaster</source>
                                 <source>src/main/kotlin/org/xmlet/htmlapifaster</source>
                                 <source>${project.build.directory}/generated-sources/org/xmlet/htmlapifaster</source>
                             </sourceDirectories>
@@ -271,7 +221,7 @@
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
-        Xsd2Poet is dedicated to generate a fluent java DSL based on a XSD file
+        Xsd2Poet-kotlin is dedicated to generate an idiomatic Kotlin extensions API.
     </description>
     <url>https://github.com/xmlet/xsd2poet</url>
     <licenses>
@@ -315,6 +265,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.xmlet</groupId>
+            <artifactId>xsd2poet-core</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xmlet</groupId>
+            <artifactId>xsd2poet-java</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
@@ -323,12 +284,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>javapoet</artifactId>
-            <version>1.13.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
