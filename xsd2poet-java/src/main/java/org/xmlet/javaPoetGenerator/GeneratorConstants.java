@@ -35,8 +35,6 @@ public class GeneratorConstants {
 
     public static final String JAVA_ROOT_PATH = "./target/generated-sources";
 
-    public static final String KOTLIN_ROOT_PATH = "./target/generated-sources";
-
     public static final String CLASS_PACKAGE = "org.xmlet.htmlapifaster";
 
     public static final String ENUM_INTERFACE_PACKAGE = "org.xmlet.xsdasmfaster.classes.infrastructure";
@@ -51,31 +49,13 @@ public class GeneratorConstants {
 
     public static final ClassName elementVisitorClassName = ClassName.get(ELEMENT_PACKAGE, "ElementVisitor");
 
-    public static final ClassName textClassName = ClassName.get(ELEMENT_PACKAGE, "Text");
-
-    public static final ClassName awaitConsumerClassName = ClassName.get(ASYNC_PACKAGE, "AwaitConsumer");
-
-    public static final ClassName suspendConsumerClassName = ClassName.get(ELEMENT_PACKAGE, "SuspendConsumer");
-
     public static final ClassName customElementClassName = ClassName.get(ELEMENT_PACKAGE, "CustomElement");
 
     public static final ClassName enumInterfaceClassName = ClassName.get(ENUM_INTERFACE_PACKAGE, "EnumInterface");
 
     public static final ClassName restrictionValidatorClassName = ClassName.get(RESTRICTION_VALIDATOR_PACKAGE, "RestrictionValidator");
 
-    public static final ClassName asyncElementClassName = ClassName.get(ASYNC_PACKAGE, "AsyncElement");
-
-    public static final ClassName elementExtensionsClassName = ClassName.get(CLASS_PACKAGE, "ElementExtensions");
-
-    public static final ClassName mfeConfiguration = ClassName.get(CLASS_PACKAGE, "MfeConfiguration");
-
-    public static final ClassName biConsumerClassName = ClassName.get(BiConsumer.class);
-
-    public static final ClassName consumerClassName = ClassName.get(Consumer.class);
-
     public static final ClassName divChoiceClassName = ClassName.get(ELEMENT_PACKAGE, "DivChoice");
-
-    public static final ClassName onCompletitionClassName = ClassName.get(ASYNC_PACKAGE, "OnCompletion");
 
     public static final ClassName globalAttributesClassName = ClassName.get(ELEMENT_PACKAGE, "GlobalAttributes");
 
@@ -101,13 +81,6 @@ public class GeneratorConstants {
     public static final ParameterizedTypeName customElementZExtendsElement =
             ParameterizedTypeName.get(
                     customElementClassName,
-                    zExtendsElement
-            );
-
-    public static final ParameterizedTypeName elementTExtendsElementZExtendsElement =
-            ParameterizedTypeName.get(
-                    elementClassName,
-                    tExtendsElement,
                     zExtendsElement
             );
 }
