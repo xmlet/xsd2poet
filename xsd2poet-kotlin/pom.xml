@@ -74,21 +74,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
-                        <phase>package</phase> <!-- Run after process-classes -->
+                        <id>attach-generated-sources</id>
                         <goals>
-                            <goal>
-                                jar-no-fork
-                            </goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                         <configuration>
-                            <includes>
-                                <include>org/xmlet/htmlapifaster/**/*.java</include>
-                                <include>org/xmlet/xsdasmfaster/**/*.java</include>
-                            </includes>
+                            <sources>
+                                <source>target/generated-sources</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
