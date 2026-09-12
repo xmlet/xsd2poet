@@ -50,6 +50,7 @@ public class Utils {
                 getValueFunction = "";
             else
                 getValueFunction = ".toString()";
+            // We also generate a primitive overload of this one; see addAttrFunction.
         } else {
             method.addParameter(ClassName.get(CLASS_PACKAGE, "Enum" + firstToUpper(type)), attrName);
             getValueFunction = ".getValue()";
