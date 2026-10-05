@@ -9,5 +9,6 @@ public interface MfeConfigurationBuilder extends MfeConfiguration {
     MfeConfigurationBuilder setMfeElementName(String mfeElementName);
     MfeConfigurationBuilder setMfeScriptUrl(String mfeScriptUrl);
     MfeConfigurationBuilder setMfeStylingUrl(String mfeStylingUrl);
+    MfeConfigurationBuilder setMfeSharedStylingUrl(String mfeSharedStylingUrl);
     MfeConfigurationBuilder setMfeScriptIntegrity(String mfeScriptIntegrity);
 }

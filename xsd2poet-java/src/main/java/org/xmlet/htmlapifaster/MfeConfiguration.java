@@ -9,6 +9,7 @@ public interface MfeConfiguration {
     String getMfeTriggerEventName();
     String getMfeScriptUrl();
     String getMfeStylingUrl();
+    String getMfeSharedStylingUrl();
     String getMfeScriptIntegrity();
     boolean isMfeStreamingData();
 }
