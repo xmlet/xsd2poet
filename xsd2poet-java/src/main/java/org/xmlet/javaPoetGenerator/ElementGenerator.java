@@ -272,7 +272,7 @@ public class ElementGenerator {
                 .addStatement("return this.self()");
         builder.addMethod(method.build());
 
-
+        addUnboxedAttrOverload(builder, className, attrName, visitAttrFunctionName, type);
 
         //to avoid building the same function several times in ElementVisitor, it will only be created if not present in the Set.
         // Several element can have the attrSomething() function in their definition
@@ -282,6 +282,30 @@ public class ElementGenerator {
             generateAttrFunction(pair, elementVisitorBuilder, name, visitAttrFunctionName, type);
             createdFunctions.add(visitAttrFunctionName);
         }
+    }
+
+
+    /** Generates the primitive overload of an attribute setter, when the attribute has one. */
+    static private void addUnboxedAttrOverload(
+            TypeSpec.Builder builder,
+            String className,
+            String attrName,
+            String visitAttrFunctionName,
+            String type
+    ) {
+        Class<?> wrapper = primitiveAndStringTypes.get(type);
+        if (wrapper == null || wrapper == String.class || wrapper == Character.class) return;
+
+        builder.addMethod(
+                MethodSpec.methodBuilder(attrName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                        .returns(ParameterizedTypeName.get(ClassName.get(CLASS_PACKAGE, className), zExtendsElement))
+                        .addParameter(TypeName.get(wrapper).unbox(), attrName)
+                        .addStatement("this.visitor." + visitAttrFunctionName
+                                + "($T.toString(" + attrName + "))", wrapper)
+                        .addStatement("return this.self()")
+                        .build()
+        );
     }
 
     private enum ElementType {
