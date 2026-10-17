@@ -199,6 +199,22 @@ public interface ElementBase<T extends Element, Z extends Element> extends Async
     }
 
     /**
+     * As forEachOf(Function, BiConsumer), and each item also carries its position, starting at 0.
+     * @param items The function that reads the collection from the model
+     * @param itemTemplate The template that consumes the element and the Slot of the indexed item
+     * @return The same element, i.e. self
+     * @param <M> The type of the model
+     * @param <E> The type of the items of the collection
+     */
+    default <M, E> T forEachIndexedOf(
+        Function<M, ? extends Iterable<E>> items,
+        BiConsumer<T, Slot<Indexed<E>>> itemTemplate
+    ) {
+        Function<M, Iterable<Indexed<E>>> indexed = model -> Indexed.over(items.apply(model));
+        return forEachOf(indexed, itemTemplate);
+    }
+
+    /**
      * Emits the body only when the condition is true for the model. The body has to close every
      * element that it opens. For a conditional attribute we use attrOfNullable instead, because
      * this closes the begin tag of the element before the body runs.
